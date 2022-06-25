@@ -1,10 +1,10 @@
 // based on: https://editor.p5js.org/tomgrad/sketches/FuxTD-Qr_
 
 const canvasScale = 2;
-const centerPix = 128;
-const imgWidth = 2 * centerPix + 1;
+const imgWidth = 257;
+const colorOffset = 127;
 
-const sourceA = 127;
+const sourceA = [127, 127];
 const omega = 6;
 const stepsPerFrame = 5;
 const phaseVelocity = 0.1;
@@ -19,7 +19,13 @@ let u = new Array(imgWidth); // u(t)
 let u_next = new Array(imgWidth); // u(t)
 let u_prev = new Array(imgWidth); // u(t)
 let t = 0;
+
 let paused = false;
+let secondSourceEnabled = false;
+const sourcePosition = [
+    [128, 128],
+    [10, 10]
+];
 
 
 function setup() {
@@ -28,10 +34,10 @@ function setup() {
     canvas.imageSmoothingEnabled = false;
     img = createImage(imgWidth, imgWidth);
 
-    createButton('Pause')
-        .mousePressed(() => paused = true);
-    createButton('Unpause')
-        .mousePressed(() => paused = false);
+    createCheckbox('Paused')
+        .changed(evt => paused = evt.target.checked);
+    createCheckbox('Second source enabled')
+        .changed(evt => secondSourceEnabled = evt.target.checked);
 
     for (let i = 0; i < imgWidth; ++i) {
         u[i] = new Array(imgWidth);
@@ -76,14 +82,15 @@ function draw() {
         return;
 
     for (let step = 0; step < stepsPerFrame; ++step) {
-        u[centerPix][centerPix] = sourceA * sin(omega * t);
+        for (let i = 0; i < 1 + Number(secondSourceEnabled); i++)
+            u[sourcePosition[i][0]][sourcePosition[i][1]] = sourceA[i] * sin(omega * t);
         update()
         t += dt;
     }
     img.loadPixels();
     for (let x = 0; x < imgWidth; ++x)
         for (let y = 0; y < imgWidth; ++y)
-            img.set(x, y, 127 + u[x][y]);
+            img.set(x, y, colorOffset + u[x][y]);
 
     img.updatePixels();
     image(img, 0, 0, imgWidth * canvasScale, imgWidth * canvasScale);
