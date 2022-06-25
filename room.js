@@ -26,6 +26,11 @@ class Room
     setMaterialValue(x, y, v)   { this.materials.valueOf()[x][y] = v;       }
     setMaterial(v) { this.materials.forEach( function(_, i, m){ m[i[0]][i[1]] = v} ) }
 
+    step() {
+        this.lastValues = this.values.clone();
+        this.values = this.nextValues.clone();
+    }
+
     // draw self
     draw(img)
     {

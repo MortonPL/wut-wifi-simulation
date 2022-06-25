@@ -2,25 +2,23 @@
 
 // ******************** GLOBAL CONSTANTS ******************** //
 // GENERAL
-const ROOM_WIDTH = 257;                                                 // (int) width of the room
-const ROOM_HEIGHT = 257;                                                // (int) height of the room
-const sourceA = [Math.floor(ROOM_WIDTH/2), Math.floor(ROOM_HEIGHT/2)];  // (point2d) starting position of the first source
+const ROOM_WIDTH = 257;  // (int) width of the room
+const ROOM_HEIGHT = 257; // (int) height of the room
 
 // VISUALS
 const CANVAS_SCALE = 2;     // (int) multiplier to pixel count per point
 const COLOR_OFFSET = 127;   // (0-255) color to use as default (no wave)
 
 // PHYSICS
-const dt = 1 / 60 / stepsPerFrame;                              // (float) time step
+const OMEGA = 6;
+const STEPS_PER_FRAME = 1;
+const PHASE_VELOCITY = 0.1;
+const ALPHA = 0.1;
+
+const dt = 1 / 60 / STEPS_PER_FRAME;                              // (float) time step
 const dx = 1 / ROOM_WIDTH;                                      // (float) width step
 const dy = 1 / ROOM_HEIGHT;                                      // (float) height step
-const c2 = phaseVelocity * phaseVelocity * dt * dt / dx / dy;
-
-const omega = 6;
-const stepsPerFrame = 1;
-const phaseVelocity = 0.1;
-const alpha = 0.1;
-
+const c2 = PHASE_VELOCITY * PHASE_VELOCITY * dt * dt / dx / dy;
 
 
 // CONTROLS
@@ -28,9 +26,7 @@ const SOURCE_MOVE_RANGE = 20;   // (in px) maximum distance for which the source
 
 // ******************** GLOBAL VARIABLES ******************** //
 let img;
-let u = new Array(ROOM_WIDTH); // u(t)
-let u_next = new Array(ROOM_WIDTH); // u(t)
-let u_prev = new Array(ROOM_WIDTH); // u(t)
+let room = new Room(ROOM_WIDTH, ROOM_HEIGHT);
 let t = 0;
 
 let paused = false;
@@ -40,6 +36,7 @@ const sourcePosition = [
     [128, 128],
     [10, 10]
 ];
+const sourceAmplitude = [127, 127];
 
 
 function setup() {
@@ -52,43 +49,27 @@ function setup() {
         .changed(evt => paused = evt.target.checked);
     createCheckbox('Second source enabled')
         .changed(evt => secondSourceEnabled = evt.target.checked);
-
-    for (let i = 0; i < ROOM_WIDTH; ++i) {
-        u[i] = new Array(ROOM_WIDTH);
-        u_next[i] = new Array(ROOM_WIDTH);
-        u_prev[i] = new Array(ROOM_WIDTH);
-    }
-
-    for (let x = 0; x < ROOM_WIDTH; ++x)
-        for (let y = 0; y < ROOM_WIDTH; ++y) {
-            u[x][y] = 0;
-            u_next[x][y] = 0;
-            u_prev[x][y] = 0;
-        }
 }
 
 function update() {
-
     for (let x = 1; x < ROOM_WIDTH - 1; ++x)
         for (let y = 1; y < ROOM_WIDTH - 1; ++y) {
-            u_next[x][y] = 2 * u[x][y] - u_prev[x][y];
-            u_next[x][y] += c2 * (u[x + 1][y] - 2 * u[x][y] + u[x - 1][y]);
-            u_next[x][y] += c2 * (u[x][y + 1] - 2 * u[x][y] + u[x][y - 1]);
-            u_next[x][y] -= alpha * dt * (u[x][y] - u_prev[x][y]);
+            let nextValue = 2 * room.getValue(x, y) - room.getLastValue(x, y);
+            nextValue += c2 * (room.getValue(x + 1, y) - 2 * room.getValue(x, y) + room.getValue(x - 1, y));
+            nextValue += c2 * (room.getValue(x, y + 1) - 2 * room.getValue(x, y) + room.getValue(x, y - 1));
+            nextValue -= ALPHA * dt * (room.getValue(x, y) - room.getLastValue(x, y));
+            room.setNextValue(x, y, nextValue);
         }
 
     // edges
     for (let x = 0; x < ROOM_WIDTH; ++x) {
-        u_next[x][0] = u_next[x][1];
-        u_next[0][x] = u_next[1][x];
-        u_next[x][ROOM_WIDTH - 1] = u_next[x][ROOM_WIDTH - 2];
-        u_next[ROOM_WIDTH - 1][x] = u_next[ROOM_WIDTH - 2][x];
+        room.setNextValue(x, 0, room.getNextValue(x, 1));
+        room.setNextValue(0, x, room.getNextValue(1, x));
+        room.setNextValue(x, ROOM_WIDTH - 1, room.getNextValue(x, ROOM_WIDTH - 2));
+        room.setNextValue(ROOM_WIDTH - 1, x, room.getNextValue(ROOM_WIDTH - 2, x));
     }
 
-    for (let x = 0; x < ROOM_WIDTH; ++x) {
-        u_prev[x] = u[x].slice();
-        u[x] = u_next[x].slice();
-    }
+    room.step();
 }
 
 // event handler
@@ -96,11 +77,13 @@ function update() {
 function mouseDragged() {
     let draggedSourceIndex = null;
     if (isMouseInsideCanvas()) {
-        let distToFirst = dist(floor(mouseX / CANVAS_SCALE), floor(mouseY / CANVAS_SCALE), sourcePosition[0][0], sourcePosition[0][1]);
+        let mousePos = [floor(mouseX / CANVAS_SCALE), floor(mouseY / CANVAS_SCALE)];
+        let distToFirst = distToSource(0, mousePos[0], mousePos[1]);
 
         // if there are two sources, pick the closest and then check for range
         if (secondSourceEnabled) {
-            let distToSecond = dist(floor(mouseX / CANVAS_SCALE), floor(mouseY / CANVAS_SCALE), sourcePosition[1][0], sourcePosition[1][1]);
+            let distToSecond = distToSource(1, mousePos[0], mousePos[1]);
+            console.log(distToFirst, distToSecond);
             if (distToFirst < distToSecond) {
                 draggedSourceIndex = distToFirst <= SOURCE_MOVE_RANGE ? 0 : null;
             } else {
@@ -121,22 +104,24 @@ function mouseDragged() {
     }
 }
 
+function distToSource(sourceIndex, x, y) {
+    if (sourceIndex < 0 || sourcePosition.length <= sourceIndex)
+        return null;
+    return dist(x, y, sourcePosition[sourceIndex][0], sourcePosition[sourceIndex][1]);
+}
+
 function draw() {
     if (paused)
         return;
 
-    for (let step = 0; step < stepsPerFrame; ++step) {
+    for (let step = 0; step < STEPS_PER_FRAME; ++step) {
         for (let i = 0; i < 1 + Number(secondSourceEnabled); i++)
-            u[sourcePosition[i][0]][sourcePosition[i][1]] = sourceA[i] * sin(omega * t);
+            room.setValue(sourcePosition[i][0], sourcePosition[i][1], sourceAmplitude[i] * sin(OMEGA * t));
         update();
         t += dt;
     }
-    img.loadPixels();
-    for (let x = 0; x < ROOM_WIDTH; ++x)
-        for (let y = 0; y < ROOM_WIDTH; ++y)
-            img.set(x, y, COLOR_OFFSET + u[x][y]);
 
-    img.updatePixels();
+    room.draw(img);
     image(img, 0, 0, ROOM_WIDTH * CANVAS_SCALE, ROOM_WIDTH * CANVAS_SCALE);
 }
 
@@ -146,4 +131,4 @@ function isMouseInsideCanvas() {
 
 function clamp(n, min, max) {
     return Math.min(Math.max(n, min), max);
-};
+}
