@@ -22,6 +22,8 @@ let t = 0;
 
 let paused = false;
 let secondSourceEnabled = false;
+let wasMousePressed = false;
+let draggedSourceIndex = null;
 const sourcePosition = [
     [128, 128],
     [10, 10]
@@ -77,14 +79,36 @@ function update() {
     }
 }
 
+function moveSources() {
+    if (mouseIsPressed != wasMousePressed) {
+        wasMousePressed = mouseIsPressed;
+        if (mouseIsPressed && isMouseInsideCanvas()) {
+            if (secondSourceEnabled) {
+                let distToFirst = dist(floor(mouseX / canvasScale), floor(mouseY / canvasScale), sourcePosition[0][0], sourcePosition[0][1]);
+                let distToSecond = dist(floor(mouseX / canvasScale), floor(mouseY / canvasScale), sourcePosition[1][0], sourcePosition[1][1]);
+                draggedSourceIndex = distToSecond < distToFirst ? 1 : 0;
+            } else
+                draggedSourceIndex = 0;
+        } else
+            draggedSourceIndex = null;
+    }
+
+    if (draggedSourceIndex !== null) {
+        sourcePosition[draggedSourceIndex][0] = clamp(floor(mouseX / canvasScale), 0, imgWidth - 1);
+        sourcePosition[draggedSourceIndex][1] = clamp(floor(mouseY / canvasScale), 0, imgWidth - 1);
+    }
+}
+
 function draw() {
+    moveSources();
+
     if (paused)
         return;
 
     for (let step = 0; step < stepsPerFrame; ++step) {
         for (let i = 0; i < 1 + Number(secondSourceEnabled); i++)
             u[sourcePosition[i][0]][sourcePosition[i][1]] = sourceA[i] * sin(omega * t);
-        update()
+        update();
         t += dt;
     }
     img.loadPixels();
@@ -95,3 +119,11 @@ function draw() {
     img.updatePixels();
     image(img, 0, 0, imgWidth * canvasScale, imgWidth * canvasScale);
 }
+
+function isMouseInsideCanvas() {
+    return 0 <= mouseX && mouseX < imgWidth * canvasScale && 0 <= mouseY && mouseY < imgWidth * canvasScale;
+}
+
+function clamp(n, min, max) {
+    return Math.min(Math.max(n, min), max);
+};
