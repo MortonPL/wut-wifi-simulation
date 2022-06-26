@@ -7,14 +7,16 @@ const ROOM_HEIGHT = 257; // (int) height of the room
 
 // VISUALS
 const CANVAS_SCALE = 2;    // (int) multiplier to pixel count per point
-const COLOR_OFFSET = 127;  // (0-255) color to use as default (no wave)
+const WAVE_COLOR = [255, 0, 0];
 
 // PHYSICS
 const OMEGA = 6;
 const STEPS_PER_FRAME = 1;
 const PHASE_VELOCITY = 0.1;
 const ALPHA = 0.1;
+const MAX_VALUE = 255;
 
+const MAX_AMPLITUDE = Math.floor(MAX_VALUE / 2);
 const dt = 1 / 60 / STEPS_PER_FRAME;  // (float) time step
 const dx = 1 / ROOM_WIDTH;   // (float) width step
 const dy = 1 / ROOM_HEIGHT;  // (float) height step
@@ -25,6 +27,7 @@ const c2 = PHASE_VELOCITY * PHASE_VELOCITY * dt * dt / dx / dy;
 const ROUTER_MOVE_RANGE = 20;  // (in px) maximum distance for which the router "snaps" to mouse to move around
 
 // ******************** GLOBAL VARIABLES ******************** //
+let bkg;
 let img;
 const room = new Room(ROOM_WIDTH, ROOM_HEIGHT);
 const routers = [
@@ -36,6 +39,10 @@ let t = 0;
 let paused = false;
 let wasMousePressed = false;
 
+
+function preload() {
+    bkg = loadImage('../material.png');
+}
 
 function setup() {
     createCanvas(ROOM_WIDTH * CANVAS_SCALE, ROOM_WIDTH * CANVAS_SCALE);
@@ -78,6 +85,8 @@ function draw() {
     if (paused)
         return;
 
+    background(MAX_VALUE);
+
     for (let step = 0; step < STEPS_PER_FRAME; ++step) {
         routers.filter(router => router.enabled)
             .forEach(router => room.setValue(router.x, router.y, router.amplitude * sin(OMEGA * t)));
@@ -85,6 +94,7 @@ function draw() {
         t += dt;
     }
 
+    image(bkg, 0, 0, ROOM_WIDTH * CANVAS_SCALE, ROOM_WIDTH * CANVAS_SCALE);
     room.draw(img);
     image(img, 0, 0, ROOM_WIDTH * CANVAS_SCALE, ROOM_WIDTH * CANVAS_SCALE);
 }

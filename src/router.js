@@ -31,5 +31,5 @@ class Router {
         this.#powerPct = value;
     }
 
-    get amplitude() { return this.#powerPct * 127; }
+    get amplitude() { return this.#powerPct * MAX_AMPLITUDE; }
 }
