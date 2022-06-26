@@ -4,10 +4,8 @@
 ** next value at point
 ** refraction coefficient
 */
-class Room
-{
-    constructor(width, height)
-    {
+class Room {
+    constructor(width, height) {
         this.width = width;
         this.height = height;
         this.values = math.matrix(math.zeros(this.width, this.height));
@@ -26,14 +24,34 @@ class Room
     setMaterialValue(x, y, v)   { this.materials.valueOf()[x][y] = v;       }
     setMaterial(v) { this.materials.forEach( function(_, i, m){ m[i[0]][i[1]] = v} ) }
 
-    step() {
+    // progress by a time step
+    update() {
+        for (let x = 1; x < this.width - 1; ++x)
+            for (let y = 1; y < this.height - 1; ++y) {
+                let nextValue = 2 * this.getValue(x, y) - this.getLastValue(x, y);
+                nextValue += c2 * (this.getValue(x + 1, y) - 2 * this.getValue(x, y) + this.getValue(x - 1, y));
+                nextValue += c2 * (this.getValue(x, y + 1) - 2 * this.getValue(x, y) + this.getValue(x, y - 1));
+                nextValue -= ALPHA * dt * (this.getValue(x, y) - this.getLastValue(x, y));
+                this.setNextValue(x, y, nextValue);
+            }
+
+        // edges
+        for (let x = 0; x < this.width; ++x) {
+            this.setNextValue(x, 0, this.getNextValue(x, 1));
+            this.setNextValue(x, this.height - 1, this.getNextValue(x, this.height - 2));
+        }
+        for (let y = 0; y < this.height; ++y) {
+            this.setNextValue(0, y, this.getNextValue(1, y));
+            this.setNextValue(this.width - 1, y, this.getNextValue(this.width - 2, y));
+        }
+
         this.lastValues = this.values.clone();
         this.values = this.nextValues.clone();
+        this.nextValues = math.zeros(this.width, this.height);
     }
 
     // draw self
-    draw(img)
-    {
+    draw(img) {
         img.loadPixels();
         this.values.forEach( function (v, i, _)
         {

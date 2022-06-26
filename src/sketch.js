@@ -49,27 +49,6 @@ function setup() {
         .changed(evt => routers[1].enabled = evt.target.checked);
 }
 
-function update() {
-    for (let x = 1; x < ROOM_WIDTH - 1; ++x)
-        for (let y = 1; y < ROOM_WIDTH - 1; ++y) {
-            let nextValue = 2 * room.getValue(x, y) - room.getLastValue(x, y);
-            nextValue += c2 * (room.getValue(x + 1, y) - 2 * room.getValue(x, y) + room.getValue(x - 1, y));
-            nextValue += c2 * (room.getValue(x, y + 1) - 2 * room.getValue(x, y) + room.getValue(x, y - 1));
-            nextValue -= ALPHA * dt * (room.getValue(x, y) - room.getLastValue(x, y));
-            room.setNextValue(x, y, nextValue);
-        }
-
-    // edges
-    for (let x = 0; x < ROOM_WIDTH; ++x) {
-        room.setNextValue(x, 0, room.getNextValue(x, 1));
-        room.setNextValue(0, x, room.getNextValue(1, x));
-        room.setNextValue(x, ROOM_WIDTH - 1, room.getNextValue(x, ROOM_WIDTH - 2));
-        room.setNextValue(ROOM_WIDTH - 1, x, room.getNextValue(ROOM_WIDTH - 2, x));
-    }
-
-    room.step();
-}
-
 // event handler
 // move the router on mouse drag if it's close enough
 function mouseDragged() {
@@ -102,7 +81,7 @@ function draw() {
     for (let step = 0; step < STEPS_PER_FRAME; ++step) {
         routers.filter(router => router.enabled)
             .forEach(router => room.setValue(router.x, router.y, router.amplitude * sin(OMEGA * t)));
-        update();
+        room.update();
         t += dt;
     }
 
