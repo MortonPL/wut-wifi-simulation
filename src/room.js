@@ -29,8 +29,9 @@ class Room {
     get WALL_COEFF() { return 3; }
     get DOOR_COEFF() { return 2; }
 
+    // TODO: commets explaining what's happening
     loadMaterial(img) {
-        // resize to fit
+        // Resize to fit
         let original = img;
         img = createImage(this.width, this.height);
         for (let x = 0; x < img.width; ++x) {
@@ -46,7 +47,7 @@ class Room {
             floor((this.width - original.width) / 2), floor((this.height - original.height) / 2),
             original.width, original.height);
 
-        // copy values
+        // Copy values
         for (let x = 0; x < img.width; ++x) {
             for (let y = 0; y < img.height; ++y) {
                 this.setMaterialValue(x, y, 1 + 4 * (1 - img.get(x, y)[0] / MAX_VALUE));
@@ -56,7 +57,8 @@ class Room {
         return img;
     }
 
-    // progress by a time step
+    // Update self, progress by a time step
+    // TODO: commets explaining what's happening
     update() {
         for (let x = 1; x < this.width - 1; ++x)
             for (let y = 1; y < this.height - 1; ++y) {
@@ -67,7 +69,7 @@ class Room {
                 this.setNextValue(x, y, nextValue);
             }
 
-        // edges
+        // Edges
         for (let x = 0; x < this.width; ++x) {
             this.setNextValue(x, 0, this.getNextValue(x, 1));
             this.setNextValue(x, this.height - 1, this.getNextValue(x, this.height - 2));
@@ -82,11 +84,15 @@ class Room {
         this.nextValues = math.zeros(this.width, this.height);
     }
 
-    // draw self
+    // Draw self, color depends on the sign of current value
     draw(img) {
         img.loadPixels();
-        this.values.forEach((v, i, _) =>
-            img.set(i[0], i[1], color(WAVE_COLOR[0], WAVE_COLOR[1], WAVE_COLOR[2], v + MAX_AMPLITUDE)));
+        this.values.forEach((v, i, _) => {
+            if (v >= 0)
+                img.set(i[0], i[1], color(POSITIVE_WAVE_COLOR[0], POSITIVE_WAVE_COLOR[1], POSITIVE_WAVE_COLOR[2], v*2))
+            else
+                img.set(i[0], i[1], color(NEGATIVE_WAVE_COLOR[0], NEGATIVE_WAVE_COLOR[1], NEGATIVE_WAVE_COLOR[2], -v*2))
+        });
         img.updatePixels();
     }
 }
