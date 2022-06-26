@@ -14,15 +14,14 @@ class Room {
         this.materials = math.matrix(math.ones(this.width, this.height));
     }
 
-    getValue(x, y)              { return this.values.valueOf()[x][y];       }
-    setValue(x, y, v)           { this.values.valueOf()[x][y] = v;          }
-    getLastValue(x, y)          { return this.lastValues.valueOf()[x][y];   }
-    setLastValue(x, y, v)       { this.lastValues.valueOf()[x][y] = v;      }
-    getNextValue(x, y)          { return this.nextValues.valueOf()[x][y];   }
-    setNextValue(x, y, v)       { this.nextValues.valueOf()[x][y] = v;      }
-    getMaterialValue(x, y)      { return this.materials.valueOf()[x][y];    }
-    setMaterialValue(x, y, v)   { this.materials.valueOf()[x][y] = v;       }
-    setMaterial(v) { this.materials.forEach( function(_, i, m){ m[i[0]][i[1]] = v} ) }
+    getValue(x, y)            { return this.values.valueOf()[x][y];     }
+    setValue(x, y, v)         { this.values.valueOf()[x][y] = v;        }
+    getLastValue(x, y)        { return this.lastValues.valueOf()[x][y]; }
+    setLastValue(x, y, v)     { this.lastValues.valueOf()[x][y] = v;    }
+    getNextValue(x, y)        { return this.nextValues.valueOf()[x][y]; }
+    setNextValue(x, y, v)     { this.nextValues.valueOf()[x][y] = v;    }
+    getMaterialValue(x, y)    { return this.materials.valueOf()[x][y];  }
+    setMaterialValue(x, y, v) { this.materials.valueOf()[x][y] = v;     }
 
     // TODO: replace random numbers with actually meaningful data???
     get AIR_COEFF() { return 1; }
@@ -30,13 +29,40 @@ class Room {
     get WALL_COEFF() { return 3; }
     get DOOR_COEFF() { return 2; }
 
+    loadMaterial(img) {
+        // resize to fit
+        let original = img;
+        img = createImage(this.width, this.height);
+        for (let x = 0; x < img.width; ++x) {
+            for (let y = 0; y < img.height; ++y) {
+                img.set(x, y, color(MAX_VALUE));
+            }
+        }
+        if (this.width / this.height < original.width / original.height)
+            original.resizeNN(this.width, 0);
+        else
+            original.resizeNN(0, this.height);
+        img.copy(original, 0, 0, original.width, original.height,
+            floor((this.width - original.width) / 2), floor((this.height - original.height) / 2),
+            original.width, original.height);
+
+        // copy values
+        for (let x = 0; x < img.width; ++x) {
+            for (let y = 0; y < img.height; ++y) {
+                this.setMaterialValue(x, y, 1 + 4 * (1 - img.get(x, y)[0] / MAX_VALUE));
+            }
+        }
+
+        return img;
+    }
+
     // progress by a time step
     update() {
         for (let x = 1; x < this.width - 1; ++x)
             for (let y = 1; y < this.height - 1; ++y) {
                 let nextValue = 2 * this.getValue(x, y) - this.getLastValue(x, y);
-                nextValue += this.getMaterialValue(x, y) * c2 * (this.getValue(x + 1, y) - 2 * this.getValue(x, y) + this.getValue(x - 1, y));
-                nextValue += this.getMaterialValue(x, y) * c2 * (this.getValue(x, y + 1) - 2 * this.getValue(x, y) + this.getValue(x, y - 1));
+                nextValue += 1 / this.getMaterialValue(x, y) * c2 * (this.getValue(x + 1, y) - 2 * this.getValue(x, y) + this.getValue(x - 1, y));
+                nextValue += 1 / this.getMaterialValue(x, y) * c2 * (this.getValue(x, y + 1) - 2 * this.getValue(x, y) + this.getValue(x, y - 1));
                 nextValue -= ALPHA * dt * (this.getValue(x, y) - this.getLastValue(x, y));
                 this.setNextValue(x, y, nextValue);
             }

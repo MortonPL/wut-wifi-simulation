@@ -27,8 +27,8 @@ const c2 = PHASE_VELOCITY * PHASE_VELOCITY * dt * dt / dx / dy;
 const ROUTER_MOVE_RANGE = 20;  // (in px) maximum distance for which the router "snaps" to mouse to move around
 
 // ******************** GLOBAL VARIABLES ******************** //
-let bkg;
-let img;
+let materialImg;
+let wavesImg;
 const room = new Room(ROOM_WIDTH, ROOM_HEIGHT);
 const routers = [
     new Router(Math.floor(ROOM_WIDTH / 2), Math.floor(ROOM_HEIGHT / 2)),
@@ -41,14 +41,16 @@ let wasMousePressed = false;
 
 
 function preload() {
-    bkg = loadImage('../material.png');
+    materialImg = loadImage('../material.png');
 }
 
 function setup() {
     createCanvas(ROOM_WIDTH * CANVAS_SCALE, ROOM_WIDTH * CANVAS_SCALE);
     noSmooth();
     canvas.imageSmoothingEnabled = false;
-    img = createImage(ROOM_WIDTH, ROOM_WIDTH);
+
+    wavesImg = createImage(ROOM_WIDTH, ROOM_WIDTH);
+    materialImg = room.loadMaterial(materialImg);
 
     createCheckbox('Paused')
         .changed(evt => paused = evt.target.checked);
@@ -94,7 +96,7 @@ function draw() {
         t += dt;
     }
 
-    image(bkg, 0, 0, ROOM_WIDTH * CANVAS_SCALE, ROOM_WIDTH * CANVAS_SCALE);
-    room.draw(img);
-    image(img, 0, 0, ROOM_WIDTH * CANVAS_SCALE, ROOM_WIDTH * CANVAS_SCALE);
+    image(materialImg, 0, 0, ROOM_WIDTH * CANVAS_SCALE, ROOM_WIDTH * CANVAS_SCALE);
+    room.draw(wavesImg);
+    image(wavesImg, 0, 0, ROOM_WIDTH * CANVAS_SCALE, ROOM_WIDTH * CANVAS_SCALE);
 }
