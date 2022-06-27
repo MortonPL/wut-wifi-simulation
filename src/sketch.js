@@ -1,33 +1,37 @@
 // based on: https://editor.p5js.org/tomgrad/sketches/FuxTD-Qr_
 
-// ******************** GLOBAL CONSTANTS ******************** //
+// ******************** GLOBAL CONSTANTS & PSEUDOCONSTANTS ******************** //
 // GENERAL
-const ROOM_WIDTH = 257;                             // (int) width of the room
-const ROOM_HEIGHT = 257;                            // (int) height of the room
+const ROOM_WIDTH = 257;                             // (int) width of the room in meters
+const ROOM_HEIGHT = 257;                            // (int) height of the room in meters
 const MAX_VALUE = 255;                              // (int) maximum acceptable wave value
 const MAX_AMPLITUDE = Math.floor(MAX_VALUE / 2);    // (int) absolute maximum wave amplitude
 
 // VISUALS
-const CANVAS_SCALE = 2;                     // (int) multiplier to pixel count per point
+const CANVAS_SCALE = 2; // (int) multiplier to pixel count per point
 
 // PHYSICS
-const dt = 1 / 60;                                              // (float) time step
-const OMEGA = 5e9;                                              // ???
-const PHASE_VELOCITY = 0.1;                                     // ???
-const ALPHA = 0.1;                                              // ???
+const dt_1 = 1e-2;                                              // (float) time step in seconds
+let dt = dt_1;                                                  // (float) time step adjusted for steps per tick (default 1 step)
+const PHASE_VELOCITY = 0.2;                                     // (float) phase velocity
+const DAMPING_RATIO = 0.1;                                      // (float) damping ratio
 const dx = 1 / ROOM_WIDTH;                                      // (float) width step
 const dy = 1 / ROOM_HEIGHT;                                     // (float) height step
-const c2 = PHASE_VELOCITY * PHASE_VELOCITY * dt * dt / dx / dy; // ???
+let c2 = PHASE_VELOCITY * PHASE_VELOCITY * dt * dt / dx / dy;   // (float) helper coefficient: v^2 multiplied by steps
 
 // CONTROLS
 const ROUTER_MOVE_RANGE = 20;  // (in px) maximum distance for which the router "snaps" to mouse to move around
 
 // ******************** GLOBAL VARIABLES ******************** //
 let materialImg;    // image object for the room layout / material layer
-let wavesImg;       // image object for the wave layer
+let waveImgs = [];  // image objects for wave values
 
-const room = new Room(ROOM_WIDTH, ROOM_HEIGHT); // room object
-const routers = [                               // router objects
+const rooms = [     // room objects
+    new Room(ROOM_WIDTH, ROOM_HEIGHT),
+    new Room(ROOM_WIDTH, ROOM_HEIGHT),
+    new Room(ROOM_WIDTH, ROOM_HEIGHT)
+]; 
+const routers = [   // router objects
     new Router(Math.floor(ROOM_WIDTH / 2), Math.floor(ROOM_HEIGHT / 2)),
     new Router(Math.floor(ROOM_WIDTH / 4), Math.floor(ROOM_HEIGHT / 4), false)
 ];
@@ -36,11 +40,12 @@ let t = 0;                              // (float) current simulated time
 let time = 0;                           // (int) timestamp of REAL time
 let tps = 60;                           // (int) ticks (updates) per second
 let stepsPerTick = 1;                   // (int) steps (calculations) per tick (update)
-let paused = false;                     // (bool) is the simulation paused?
+let paused = true;                      // (bool) is the simulation paused?
 let wasMousePressed = false;            // (bool) was the mouse pressed in the previous frame?
 let positiveWaveColor = [255, 0, 0];    // (RGB) color of the positive values
 let negativeWaveColor = [0, 0, 255];    // (RGB) color of the negative values
 let showSignOnly = false;               // (bool) should we visualize only the sign of wave (as opposed to intensity)?
+let currentFrequency = 0;               // (int) index of the frequency we're currently watching
 
 // ******************** FUNCTIONS ******************** //
 // from: https://stackoverflow.com/a/65552876
@@ -60,14 +65,14 @@ function preload() {
 // Setup function that initializes all necessary data and widgets
 function setup() {
     // Setup the canvas
-    var canvas = createCanvas(ROOM_WIDTH * CANVAS_SCALE, ROOM_WIDTH * CANVAS_SCALE);
+    var canvas = createCanvas(ROOM_WIDTH * CANVAS_SCALE, ROOM_HEIGHT * CANVAS_SCALE);
     canvas.parent('sketchImage');
     noSmooth();
     canvas.imageSmoothingEnabled = false;
 
     // Setup the image layers
     wavesImg = createImage(ROOM_WIDTH, ROOM_WIDTH);
-    materialImg = room.loadMaterial(materialImg);
+    materialImg = rooms[0].loadMaterial(materialImg);
 }
 
 // Event handler
@@ -103,13 +108,16 @@ function update() {
     // Check if enough time passed to process another tick (in miliseconds)
     if (Date.now() - time >= 1000 / tps) {
         time = Date.now();
-        for (let i = 0; i < stepsPerTick; i++) {
-            // For each enabled router, emit wave
-            routers.filter(router => router.enabled)
-                .forEach(router => room.setValue(router.x, router.y, router.amplitude * sin(router.frequency * t)));
-            // Propagate the waves in the room
-            room.update();
-            t += dt;
+        for (var j = 0; j < rooms.length; j++) {
+            for (let i = 0; i < stepsPerTick; i++) {
+                // For each enabled router, emit wave
+                routers.filter(router => router.enabled).filter(router => router.frequencyIdx === j)
+                    .forEach(router => rooms[j].setValue(router.x, router.y, router.amplitude * sin(router.frequency * t)));
+                // Propagate the waves in the room
+                rooms[j].update();
+                //console.log(rooms[0].getValue(128, 128)); // DEBUG
+                t += dt;
+            }
         }
     }
 }
@@ -121,6 +129,6 @@ function draw() {
 
     image(materialImg, 0, 0, ROOM_WIDTH * CANVAS_SCALE, ROOM_WIDTH * CANVAS_SCALE);
     routers.forEach(router => router.draw());
-    room.draw(wavesImg);
+    rooms[currentFrequency].draw(wavesImg);
     image(wavesImg, 0, 0, ROOM_WIDTH * CANVAS_SCALE, ROOM_WIDTH * CANVAS_SCALE);
 }

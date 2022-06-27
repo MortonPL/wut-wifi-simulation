@@ -50,7 +50,7 @@ class Room {
         // Copy values
         for (let x = 0; x < img.width; ++x) {
             for (let y = 0; y < img.height; ++y) {
-                this.setMaterialValue(x, y, 1 + 4 * (1 - img.get(x, y)[0] / MAX_VALUE));
+                this.setMaterialValue(x, y, 1 + 2.5 * (1 - img.get(x, y)[0] / MAX_VALUE));
             }
         }
 
@@ -72,7 +72,7 @@ class Room {
                 let nextValue = 2 * this.getValue(x, y) - this.getLastValue(x, y);
                 nextValue += 1 / this.getMaterialValue(x, y) * c2 * (this.getValue(x + 1, y) - 2 * this.getValue(x, y) + this.getValue(x - 1, y));
                 nextValue += 1 / this.getMaterialValue(x, y) * c2 * (this.getValue(x, y + 1) - 2 * this.getValue(x, y) + this.getValue(x, y - 1));
-                nextValue -= ALPHA * dt * (this.getValue(x, y) - this.getLastValue(x, y));
+                nextValue -= DAMPING_RATIO * dt * (this.getValue(x, y) - this.getLastValue(x, y));
                 this.setNextValue(x, y, nextValue);
             }
 
@@ -97,11 +97,11 @@ class Room {
         this.values.forEach((v, i, _) => {
             // NOTE: we love magic numbers
             if (showSignOnly)
-                v = v >= 0.1 ? 32 : v <= -0.1 ? -32 : 0;
+                v = v >= 0.1 ? 64 : v <= -0.1 ? -64 : 0;
             if (v >= 0)
-                img.set(i[0], i[1], color(positiveWaveColor[0], positiveWaveColor[1], positiveWaveColor[2], v*2*2))
+                img.set(i[0], i[1], color(positiveWaveColor[0], positiveWaveColor[1], positiveWaveColor[2], v*2))
             else
-                img.set(i[0], i[1], color(negativeWaveColor[0], negativeWaveColor[1], negativeWaveColor[2], -v*2*2))
+                img.set(i[0], i[1], color(negativeWaveColor[0], negativeWaveColor[1], negativeWaveColor[2], -v*2))
         });
         img.updatePixels();
     }

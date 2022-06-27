@@ -22,11 +22,22 @@
     <p>
       <table>
         <tr>
-          <td><label for="chkPaused">Paused</label></td>
-          <td><input type="checkbox" id="chkPaused" onchange="chkPausedEvent(this)"></td>
+          <td><input type="button" id="btnClean" onclick="btnCleanEvent()" value="Clean"></td>
         </tr>
         <tr>
-          <td><input type="button" id="btnClean" onclick="btnCleanEvent()" value="Clean"></td>
+          <td><label for="chkPaused">Paused</label></td>
+          <td><input type="checkbox" id="chkPaused" onchange="chkPausedEvent(this)" checked="true"></td>
+        </tr>
+        <tr>
+          <td>View frequency</td>
+          <td>
+            <input type="radio" id="chkFrequencyLow" onchange="chkFrequencyLowEvent(this)" name="chkFrequency" checked="true">
+            <label for="chkFrequencyLow">2.4 GHz</label>
+            <input type="radio" id="chkFrequencyHigh" onchange="chkFrequencyHighEvent(this)" name="chkFrequency">
+            <label for="chkFrequencyHigh">5 GHz</label>
+            <input type="radio" id="chkFrequencyCustom" onchange="chkFrequencyCustomEvent(this)" name="chkFrequency">
+            <label for="chkFrequencyCustom">Custom</label>
+          </td>
         </tr>
         <!-- Router I control -->
         <tr>
