@@ -2,15 +2,15 @@
 
 // ******************** GLOBAL CONSTANTS & PSEUDOCONSTANTS ******************** //
 // GENERAL
-const ROOM_WIDTH = 129;                             // (int) width of the room in meters
-const ROOM_HEIGHT = 129;                            // (int) height of the room in meters
+const ROOM_WIDTH = 257;                             // (int) width of the room in meters
+const ROOM_HEIGHT = 257;                            // (int) height of the room in meters
 const MAX_VALUE = 255;                              // (int) maximum acceptable wave value
 const MAX_AMPLITUDE = Math.floor(MAX_VALUE / 2);    // (int) absolute maximum wave amplitude
 let tps = 60;                                       // (int) ticks (updates) per second
 let stepsPerTick = 1;                               // (int) steps (calculations) per tick (update)
 
 // VISUALS
-const CANVAS_SCALE = 4;                 // (int) multiplier to pixel count per point
+const CANVAS_SCALE = 2;                 // (int) multiplier to pixel count per point
 let positiveWaveColor = [255, 0, 0];    // (RGB) color of the positive values
 let negativeWaveColor = [0, 0, 255];    // (RGB) color of the negative values
 
@@ -28,14 +28,10 @@ const ROUTER_MOVE_RANGE = 20;  // (in px) maximum distance for which the router 
 
 // ******************** GLOBAL VARIABLES ******************** //
 let materialImg;    // image object for the room layout / material layer
-let waveImgs = [];  // image objects for wave values
+let waveImg;        // image object for wave values
 
-const rooms = [     // room objects
-    new Room(ROOM_WIDTH, ROOM_HEIGHT),
-    new Room(ROOM_WIDTH, ROOM_HEIGHT),
-    new Room(ROOM_WIDTH, ROOM_HEIGHT)
-]; 
-const routers = [   // router objects
+const room = new Room(ROOM_WIDTH, ROOM_HEIGHT); // room objects
+const routers = [                               // router objects
     new Router(Math.floor(ROOM_WIDTH / 2), Math.floor(ROOM_HEIGHT / 2)),
     new Router(Math.floor(ROOM_WIDTH / 4), Math.floor(ROOM_HEIGHT / 4), false)
 ];
@@ -45,7 +41,6 @@ let time = 0;                           // (int) timestamp of REAL time
 let paused = true;                      // (bool) is the simulation paused?
 let wasMousePressed = false;            // (bool) was the mouse pressed in the previous frame?
 let showSignOnly = false;               // (bool) should we visualize only the sign of wave (as opposed to intensity)?
-let currentFrequency = 0;               // (int) index of the frequency we're currently watching
 
 // ******************** FUNCTIONS ******************** //
 // from: https://stackoverflow.com/a/65552876
@@ -72,7 +67,7 @@ function setup() {
 
     // Setup the image layers
     wavesImg = createImage(ROOM_WIDTH, ROOM_WIDTH);
-    materialImg = rooms[0].loadMaterial(materialImg);
+    materialImg = room.loadMaterial(materialImg);
 }
 
 // Event handler
@@ -112,15 +107,13 @@ function update() {
     // Check if enough time passed to process another tick (in miliseconds)
     if (Date.now() - time >= 1000 / tps) {
         time = Date.now();
-        for (var j = 0; j < rooms.length; j++) {
-            for (let i = 0; i < stepsPerTick; i++) {
-                // For each enabled router, emit wave
-                routers.filter(router => router.enabled).filter(router => router.frequencyIdx === j)
-                    .forEach(router => rooms[j].setValue(router.x, router.y, router.amplitude * sin(router.frequency * t)));
-                // Propagate the waves in the room
-                rooms[j].update();
-                t += dt;
-            }
+        for (let i = 0; i < stepsPerTick; i++) {
+            // For each enabled router, emit wave
+            routers.filter(router => router.enabled)
+                .forEach(router => room.setValue(router.x, router.y, router.amplitude * sin(router.frequency * t)));
+            // Propagate the waves in the room
+            room.update();
+            t += dt;
         }
     }
 }
@@ -131,7 +124,7 @@ function draw() {
         update();
 
     image(materialImg, 0, 0, ROOM_WIDTH * CANVAS_SCALE, ROOM_WIDTH * CANVAS_SCALE);
-    rooms[currentFrequency].draw(wavesImg);
+    room.draw(wavesImg);
     image(wavesImg, 0, 0, ROOM_WIDTH * CANVAS_SCALE, ROOM_WIDTH * CANVAS_SCALE);
     routers.forEach(router => router.draw());
 }

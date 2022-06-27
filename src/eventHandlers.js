@@ -10,16 +10,13 @@ function btnPausedEvent(btn) {
 }
 
 function btnCleanEvent() {
-    rooms.forEach(room => room.clean());
+    room.clean();
 }
 
 function btnResetEvent() {
     // change all values to default
-    currentFrequency = 0;
     routers[0].frequency = Router.LOW_FREQUENCY;
-    routers[0].frequencyIdx = 0;
     routers[1].frequency = Router.LOW_FREQUENCY;
-    routers[1].frequencyIdx = 0;
     damping = 0.25;
     phaseVelocity = 0.2;
     tps = 60;
@@ -30,7 +27,6 @@ function btnResetEvent() {
     dt = dt_1 / stepsPerTick;
     c2 = phaseVelocity * phaseVelocity * dt * dt / dx / dy;
     // change all controls to default
-    document.getElementById("chkFrequencyLow").checked = true;
     document.getElementById("chkFirstRouter").checked = true;
     document.getElementById("chkRouter1Low").checked = true;
     document.getElementById("chkRouter1CustomValue").value = 0;
@@ -46,41 +42,26 @@ function btnResetEvent() {
     document.getElementById("chkSignOnly").checked = false;
 }
 
-function chkFrequencyLowEvent(chk) {
-    currentFrequency = 0;
-}
-
-function chkFrequencyHighEvent(chk) {
-    currentFrequency = 1;
-}
-
-function chkFrequencyCustomEvent(chk) {
-    currentFrequency = 2;
-}
-
 function chkRouter1EnabledEvent(chk) {
     routers[0].enabled = chk.checked;
 }
 
 function chkRouter1LowEvent(chk) {
     routers[0].frequency = Router.LOW_FREQUENCY;
-    routers[0].frequencyIdx = 0;
 }
 
 function chkRouter1HighEvent(chk) {
     routers[0].frequency = Router.HIGH_FREQUENCY;
-    routers[0].frequencyIdx = 1;
 }
 
 function chkRouter1CustomEvent(chk) {
     routers[0].frequency = document.getElementById("chkRouter1CustomValue").value;
-    routers[0].frequencyIdx = 2;
 }
 
 function chkRouter1CustomValueEvent(txt) {
     if (document.getElementById("chkRouter1Custom").checked)
         if (!isNaN(float(txt.value)))
-            routers[0].frequency = float(txt.value);
+            routers[0].frequency = float(txt.value) * 10;
 }
 
 function chkSignOnlyEvent(chk) {
@@ -93,23 +74,20 @@ function chkRouter2EnabledEvent(chk) {
 
 function chkRouter2LowEvent(chk) {
     routers[1].frequency = Router.LOW_FREQUENCY;
-    routers[1].frequencyIdx = 0;
 }
 
 function chkRouter2HighEvent(chk) {
     routers[1].frequency = Router.HIGH_FREQUENCY;
-    routers[1].frequencyIdx = 1;
 }
 
 function chkRouter2CustomEvent(chk) {
     routers[1].frequency = document.getElementById("chkRouter2CustomValue").value;
-    routers[1].frequencyIdx = 2;
 }
 
 function chkRouter2CustomValueEvent(txt) {
     if (document.getElementById("chkRouter2Custom").checked)
         if (!isNaN(float(txt.value)))
-            routers[1].frequency = float(txt.value);
+            routers[1].frequency = float(txt.value) * 10;
 }
 
 function chkDampingEvent(txt) {

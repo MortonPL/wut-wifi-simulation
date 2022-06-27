@@ -2,13 +2,12 @@
  * Router can have changing position and can be enabled/disabled.
  */
 class Router {
-    static LOW_FREQUENCY = 2.4;
-    static HIGH_FREQUENCY = 5.0;
+    static LOW_FREQUENCY = 24;
+    static HIGH_FREQUENCY = 50;
     #position;
     #powerPct;  // range: [0, 1]
     enabled;
-    frequency = 2.4;
-    frequencyIdx = 0;
+    frequency = 24;
     static routerImg;
 
     constructor(x, y, enabled = true, powerPct = 1.0) {
