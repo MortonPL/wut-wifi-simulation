@@ -12,7 +12,7 @@ const CANVAS_SCALE = 2;                     // (int) multiplier to pixel count p
 
 // PHYSICS
 const dt = 1 / 60;                                              // (float) time step
-const OMEGA = 6;                                                // ???
+const OMEGA = 5e9;                                              // ???
 const PHASE_VELOCITY = 0.1;                                     // ???
 const ALPHA = 0.1;                                              // ???
 const dx = 1 / ROOM_WIDTH;                                      // (float) width step
@@ -40,6 +40,7 @@ let paused = false;                     // (bool) is the simulation paused?
 let wasMousePressed = false;            // (bool) was the mouse pressed in the previous frame?
 let positiveWaveColor = [255, 0, 0];    // (RGB) color of the positive values
 let negativeWaveColor = [0, 0, 255];    // (RGB) color of the negative values
+let showSignOnly = false;               // (bool) should we visualize only the sign of wave (as opposed to intensity)?
 
 // ******************** FUNCTIONS ******************** //
 // from: https://stackoverflow.com/a/65552876
@@ -105,7 +106,7 @@ function update() {
         for (let i = 0; i < stepsPerTick; i++) {
             // For each enabled router, emit wave
             routers.filter(router => router.enabled)
-                .forEach(router => room.setValue(router.x, router.y, router.amplitude * sin(OMEGA * t)));
+                .forEach(router => room.setValue(router.x, router.y, router.amplitude * sin(router.frequency * t)));
             // Propagate the waves in the room
             room.update();
             t += dt;

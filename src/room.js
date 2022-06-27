@@ -57,6 +57,13 @@ class Room {
         return img;
     }
 
+    // reset simulation values
+    clean() {
+        this.values = math.matrix(math.zeros(this.width, this.height));
+        this.lastValues = math.matrix(math.zeros(this.width, this.height));
+        this.nextValues = math.matrix(math.zeros(this.width, this.height));
+    }
+
     // Update self, progress by a time step
     // TODO: commets explaining what's happening
     update() {
@@ -88,10 +95,13 @@ class Room {
     draw(img) {
         img.loadPixels();
         this.values.forEach((v, i, _) => {
+            // NOTE: we love magic numbers
+            if (showSignOnly)
+                v = v >= 0.1 ? 32 : v <= -0.1 ? -32 : 0;
             if (v >= 0)
-                img.set(i[0], i[1], color(positiveWaveColor[0], positiveWaveColor[1], positiveWaveColor[2], v*2))
+                img.set(i[0], i[1], color(positiveWaveColor[0], positiveWaveColor[1], positiveWaveColor[2], v*2*2))
             else
-                img.set(i[0], i[1], color(negativeWaveColor[0], negativeWaveColor[1], negativeWaveColor[2], -v*2))
+                img.set(i[0], i[1], color(negativeWaveColor[0], negativeWaveColor[1], negativeWaveColor[2], -v*2*2))
         });
         img.updatePixels();
     }

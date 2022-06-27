@@ -18,7 +18,7 @@
     <script src="src/sketch.js"></script>
     <!-- Sketch canvas here -->
     <div id="sketchImage" style="display:inline-block; border:solid;"></div>
-    <!-- Controls here--> 
+    <!-- Controls here --> 
     <p>
       <table>
         <tr>
@@ -26,13 +26,59 @@
           <td><input type="checkbox" id="chkPaused" onchange="chkPausedEvent(this)"></td>
         </tr>
         <tr>
-          <td><label for="chkFirstRouter">Enable first router</label></td>
-          <td><input type="checkbox" id="chkFirstRouter" onchange="chkFirstRouterEvent(this)" checked="true"></td>
+          <td><input type="button" id="btnClean" onclick="btnCleanEvent()" value="Clean"></td>
         </tr>
+        <!-- Router I control -->
         <tr>
-          <td><label for="chkSecondRouter">Enable second router</label></td>
-          <td><input type="checkbox" id="chkSecondRouter" onchange="chkSecondRouterEvent(this)"></td>
+          <td>Router I</td>
+          <td>
+            <label for="chkFirstRouter">Enabled</label>
+            <input type="checkbox" id="chkFirstRouter" onchange="chkRouter1EnabledEvent(this)" checked="true">
+          </td>
+          <td>
+            <table>
+              <tr>
+                <td><input type="radio" id="chkRouter1Low" onchange="chkRouter1LowEvent(this)" name="chkRouter1Frequency" checked="true">
+                <label for="chkRouter1Low">2.4 GHz</label></td>
+              </tr>
+              <tr>
+                <td><input type="radio" id="chkRouter1High" onchange="chkRouter1HighEvent(this)" name="chkRouter1Frequency">
+                <label for="chkRouter1High">5 GHz</label></td>
+              </tr>
+              <tr>
+                <td><input type="radio" id="chkRouter1Custom" onchange="chkRouter1CustomEvent(this)" name="chkRouter1Frequency">
+                <label for="chkRouter1Custom">Custom (in GHz)</label>
+                <input type="text" id="chkRouter1CustomValue" onchange="chkRouter1CustomValueEvent(this)" value="0"></td>
+              </tr>
+            </table>
+          </td>
         </tr>
+        <!-- Router II control -->
+        <tr>
+          <td>Router II</td>
+          <td>
+            <label for="chkSecondRouter">Enabled</label>
+            <input type="checkbox" id="chkSecondRouter" onchange="chkRouter2EnabledEvent(this)">
+          </td>
+          <td>
+            <table>
+              <tr>
+                <td><input type="radio" id="chkRouter2Low" onchange="chkRouter2LowEvent(this)" name="chkRouter2Frequency" checked="true">
+                <label for="chkRouter2Low">2.4 GHz</label></td>
+              </tr>
+              <tr>
+                <td><input type="radio" id="chkRouter2High" onchange="chkRouter2HighEvent(this)" name="chkRouter2Frequency">
+                <label for="chkRouter2High">5 GHz</label></td>
+              </tr>
+              <tr>
+                <td><input type="radio" id="chkRouter2Custom" onchange="chkRouter2CustomEvent(this)" name="chkRouter2Frequency">
+                <label for="chkRouter2Custom">Custom (in GHz)</label>
+                <input type="text" id="chkRouter2CustomValue" onchange="chkRouter2CustomValueEvent(this)" value="0"></td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <!-- Other controls -->
         <tr>
           <td><label for="sldTicksPerSecond">Ticks per second (1-60)</label></td>
           <td><input type="range" id="sldTicksPerSecond" oninput="sldTicksPerSecondEvent(this)" class="slider" min="1" max="60" step="1" value="60"></td>
@@ -48,6 +94,10 @@
         <tr>
           <td><label for="clrNegativeWave">Negative wave color</label></td>
           <td><input type="color" id="clrNegativeWave" oninput="clrNegativeWave(this)" value="#0000ff"></td>
+        </tr>
+        <tr>
+          <td><label for="chkSignOnly">Show sign only</label></td>
+          <td><input type="checkbox" id="chkSignOnly" onchange="chkSignOnlyEvent(this)"></td>
         </tr>
       </table>
     </p>
