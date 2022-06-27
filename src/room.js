@@ -89,9 +89,9 @@ class Room {
         img.loadPixels();
         this.values.forEach((v, i, _) => {
             if (v >= 0)
-                img.set(i[0], i[1], color(POSITIVE_WAVE_COLOR[0], POSITIVE_WAVE_COLOR[1], POSITIVE_WAVE_COLOR[2], v*2))
+                img.set(i[0], i[1], color(positiveWaveColor[0], positiveWaveColor[1], positiveWaveColor[2], v*2))
             else
-                img.set(i[0], i[1], color(NEGATIVE_WAVE_COLOR[0], NEGATIVE_WAVE_COLOR[1], NEGATIVE_WAVE_COLOR[2], -v*2))
+                img.set(i[0], i[1], color(negativeWaveColor[0], negativeWaveColor[1], negativeWaveColor[2], -v*2))
         });
         img.updatePixels();
     }

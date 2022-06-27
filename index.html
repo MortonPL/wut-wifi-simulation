@@ -8,11 +8,48 @@
     <script src="src/assetCache.js"></script>
     <script src="src/room.js"></script>
     <script src="src/router.js"></script>
+    <script src="src/eventHandlers.js"></script>
     <link rel="stylesheet" type="text/css" href="style.css" />
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
     <meta charset="utf-8">
   </head>
   <body>
+    <!-- Sketch script here -->
     <script src="src/sketch.js"></script>
+    <!-- Sketch canvas here -->
+    <div id="sketchImage" style="display:inline-block; border:solid;"></div>
+    <!-- Controls here--> 
+    <p>
+      <table>
+        <tr>
+          <td><label for="chkPaused">Paused</label></td>
+          <td><input type="checkbox" id="chkPaused" onchange="chkPausedEvent(this)"></td>
+        </tr>
+        <tr>
+          <td><label for="chkFirstRouter">Enable first router</label></td>
+          <td><input type="checkbox" id="chkFirstRouter" onchange="chkFirstRouterEvent(this)" checked="true"></td>
+        </tr>
+        <tr>
+          <td><label for="chkSecondRouter">Enable second router</label></td>
+          <td><input type="checkbox" id="chkSecondRouter" onchange="chkSecondRouterEvent(this)"></td>
+        </tr>
+        <tr>
+          <td><label for="sldTicksPerSecond">Ticks per second (1-60)</label></td>
+          <td><input type="range" id="sldTicksPerSecond" oninput="sldTicksPerSecondEvent(this)" class="slider" min="1" max="60" step="1" value="60"></td>
+        </tr>
+        <tr>
+          <td><label for="sldStepsPerTick">Steps per tick (1-10)</label></td>
+          <td><input type="range" id="sldStepsPerTick" oninput="sldStepsPerTickEvent(this)" class="slider" min="1" max="10" step="1" value="1"></td>
+        </tr>
+        <tr>
+          <td><label for="clrPositiveWave">Positive wave color</label></td>
+          <td><input type="color" id="clrPositiveWave" oninput="clrPositiveWave(this)" value="#ff0000"></td>
+        </tr>
+        <tr>
+          <td><label for="clrNegativeWave">Negative wave color</label></td>
+          <td><input type="color" id="clrNegativeWave" oninput="clrNegativeWave(this)" value="#0000ff"></td>
+        </tr>
+      </table>
+    </p>
   </body>
 </html>

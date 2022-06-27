@@ -9,8 +9,6 @@ const MAX_AMPLITUDE = Math.floor(MAX_VALUE / 2);    // (int) absolute maximum wa
 
 // VISUALS
 const CANVAS_SCALE = 2;                     // (int) multiplier to pixel count per point
-const POSITIVE_WAVE_COLOR = [255, 0, 0];    // (RGB) color of the positive values
-const NEGATIVE_WAVE_COLOR = [0, 0, 255];    // (RGB) color of the negative values
 
 // PHYSICS
 const dt = 1 / 60;                                              // (float) time step
@@ -34,14 +32,19 @@ const routers = [                               // router objects
     new Router(Math.floor(ROOM_WIDTH / 4), Math.floor(ROOM_HEIGHT / 4), false)
 ];
 
-let t = 0;                      // (float) current simulated time
-let time = 0;                   // (int) timestamp of REAL time
-let tps = 60;                   // (int) ticks (updates) per second
-let stepsPerTick = 1;           // (int) steps (calculations) per tick (update)
-let paused = false;             // (bool) is the simulation paused?
-let wasMousePressed = false;    // (bool) was the mouse pressed in the previous frame?
+let t = 0;                              // (float) current simulated time
+let time = 0;                           // (int) timestamp of REAL time
+let tps = 60;                           // (int) ticks (updates) per second
+let stepsPerTick = 1;                   // (int) steps (calculations) per tick (update)
+let paused = false;                     // (bool) is the simulation paused?
+let wasMousePressed = false;            // (bool) was the mouse pressed in the previous frame?
+let positiveWaveColor = [255, 0, 0];    // (RGB) color of the positive values
+let negativeWaveColor = [0, 0, 255];    // (RGB) color of the negative values
 
 // ******************** FUNCTIONS ******************** //
+// from: https://stackoverflow.com/a/65552876
+function hexToRgb(h){return['0x'+h[1]+h[2]|0,'0x'+h[3]+h[4]|0,'0x'+h[5]+h[6]|0]}
+
 // Preload function that loads and caches assets (images)
 function preload() {
     let a = new AssetCache();
@@ -56,36 +59,14 @@ function preload() {
 // Setup function that initializes all necessary data and widgets
 function setup() {
     // Setup the canvas
-    createCanvas(ROOM_WIDTH * CANVAS_SCALE, ROOM_WIDTH * CANVAS_SCALE);
+    var canvas = createCanvas(ROOM_WIDTH * CANVAS_SCALE, ROOM_WIDTH * CANVAS_SCALE);
+    canvas.parent('sketchImage');
     noSmooth();
     canvas.imageSmoothingEnabled = false;
 
     // Setup the image layers
     wavesImg = createImage(ROOM_WIDTH, ROOM_WIDTH);
     materialImg = room.loadMaterial(materialImg);
-
-    // Setup widgets
-    // Checkboxes
-    createCheckbox('Paused', false)
-        .changed(evt => paused = evt.target.checked);
-    createCheckbox('First router enabled', true)
-        .changed(evt => routers[0].enabled = evt.target.checked);
-    createCheckbox('Second router enabled', false)
-        .changed(evt => routers[1].enabled = evt.target.checked);
-    // Ticks per second slider
-    var tpsSlider = createSlider(1, 60, 60)
-        .input(evt => {
-            tps = evt.target.value;
-        })
-    var tpsSliderName = createDiv('Ticks per second (1-60)');
-    tpsSlider.parent(tpsSliderName);
-    // Steps per tick slider
-    var stepsPerTickSlider = createSlider(1, 10, 1)
-    .input(evt => {
-        stepsPerTick = evt.target.value;
-    })
-    var stepsPerTickSliderName = createDiv('Steps per tick (1-10)');
-    stepsPerTickSlider.parent(stepsPerTickSliderName);
 }
 
 // Event handler
