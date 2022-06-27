@@ -24,8 +24,8 @@ function chkRouter1CustomEvent(chk) {
 
 function chkRouter1CustomValueEvent(txt) {
     if (document.getElementById("chkRouter1Custom").checked)
-        routers[0].frequency = float(txt.value) * 1e9;
-    console.log(routers[0].frequency);
+        if (!isNaN(float(txt.value)))
+            routers[0].frequency = float(txt.value) * 1e9;
 }
 
 function chkSignOnlyEvent(chk) {
