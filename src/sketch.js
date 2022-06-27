@@ -6,18 +6,22 @@ const ROOM_WIDTH = 257;                             // (int) width of the room i
 const ROOM_HEIGHT = 257;                            // (int) height of the room in meters
 const MAX_VALUE = 255;                              // (int) maximum acceptable wave value
 const MAX_AMPLITUDE = Math.floor(MAX_VALUE / 2);    // (int) absolute maximum wave amplitude
+let tps = 60;                                       // (int) ticks (updates) per second
+let stepsPerTick = 1;                               // (int) steps (calculations) per tick (update)
 
 // VISUALS
-const CANVAS_SCALE = 2; // (int) multiplier to pixel count per point
+const CANVAS_SCALE = 2;                 // (int) multiplier to pixel count per point
+let positiveWaveColor = [255, 0, 0];    // (RGB) color of the positive values
+let negativeWaveColor = [0, 0, 255];    // (RGB) color of the negative values
 
 // PHYSICS
 const dt_1 = 1e-2;                                              // (float) time step in seconds
-let dt = dt_1;                                                  // (float) time step adjusted for steps per tick (default 1 step)
-const PHASE_VELOCITY = 0.2;                                     // (float) phase velocity
-const DAMPING_RATIO = 0.1;                                      // (float) damping ratio
+let dt = dt_1 / stepsPerTick;                                   // (float) time step adjusted for steps per tick (default 1 step)
+let phaseVelocity = 0.2;                                        // (float) phase velocity
+let dampingRatio = 0.25;                                        // (float) damping ratio
 const dx = 1 / ROOM_WIDTH;                                      // (float) width step
 const dy = 1 / ROOM_HEIGHT;                                     // (float) height step
-let c2 = PHASE_VELOCITY * PHASE_VELOCITY * dt * dt / dx / dy;   // (float) helper coefficient: v^2 multiplied by steps
+let c2 = phaseVelocity * phaseVelocity * dt * dt / dx / dy;   // (float) helper coefficient: v^2 multiplied by steps
 
 // CONTROLS
 const ROUTER_MOVE_RANGE = 20;  // (in px) maximum distance for which the router "snaps" to mouse to move around
@@ -38,12 +42,8 @@ const routers = [   // router objects
 
 let t = 0;                              // (float) current simulated time
 let time = 0;                           // (int) timestamp of REAL time
-let tps = 60;                           // (int) ticks (updates) per second
-let stepsPerTick = 1;                   // (int) steps (calculations) per tick (update)
 let paused = true;                      // (bool) is the simulation paused?
 let wasMousePressed = false;            // (bool) was the mouse pressed in the previous frame?
-let positiveWaveColor = [255, 0, 0];    // (RGB) color of the positive values
-let negativeWaveColor = [0, 0, 255];    // (RGB) color of the negative values
 let showSignOnly = false;               // (bool) should we visualize only the sign of wave (as opposed to intensity)?
 let currentFrequency = 0;               // (int) index of the frequency we're currently watching
 
@@ -84,6 +84,10 @@ function mouseDragged() {
         y: floor(mouseY / CANVAS_SCALE)
     };
 
+    // check if mouse is inside the canvas at all
+    if (!isMouseInsideCanvas())
+        return;
+
     // Find enabled routers and their distance from mouse
     let enabledRouters = routers.filter(router => router.enabled)
         .map(router => ({
@@ -115,7 +119,6 @@ function update() {
                     .forEach(router => rooms[j].setValue(router.x, router.y, router.amplitude * sin(router.frequency * t)));
                 // Propagate the waves in the room
                 rooms[j].update();
-                //console.log(rooms[0].getValue(128, 128)); // DEBUG
                 t += dt;
             }
         }
@@ -128,7 +131,11 @@ function draw() {
         update();
 
     image(materialImg, 0, 0, ROOM_WIDTH * CANVAS_SCALE, ROOM_WIDTH * CANVAS_SCALE);
-    routers.forEach(router => router.draw());
     rooms[currentFrequency].draw(wavesImg);
     image(wavesImg, 0, 0, ROOM_WIDTH * CANVAS_SCALE, ROOM_WIDTH * CANVAS_SCALE);
+    routers.forEach(router => router.draw());
+}
+
+function isMouseInsideCanvas() {
+    return 0 <= mouseX && mouseX < ROOM_WIDTH * CANVAS_SCALE && 0 <= mouseY && mouseY < ROOM_WIDTH * CANVAS_SCALE;
 }

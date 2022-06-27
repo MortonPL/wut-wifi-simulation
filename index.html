@@ -20,14 +20,12 @@
     <div id="sketchImage" style="display:inline-block; border:solid;"></div>
     <!-- Controls here --> 
     <p>
+      <!-- Main controls -->
+      <input type="button" id="btnPaused" onclick="btnPausedEvent(this)" value="Start">
+      <input type="button" id="btnClean" onclick="btnCleanEvent()" value="Reset space">
+      <input type="button" id="btnReset" onclick="btnResetEvent()" value="Reset all values">
+      <!-- Specific values controls -->
       <table>
-        <tr>
-          <td><input type="button" id="btnClean" onclick="btnCleanEvent()" value="Clean"></td>
-        </tr>
-        <tr>
-          <td><label for="chkPaused">Paused</label></td>
-          <td><input type="checkbox" id="chkPaused" onchange="chkPausedEvent(this)" checked="true"></td>
-        </tr>
         <tr>
           <td>View frequency</td>
           <td>
@@ -90,6 +88,14 @@
           </td>
         </tr>
         <!-- Other controls -->
+        <tr>
+          <td><label for="chkDampingRatio">Damping ratio</label></td>
+          <td><input type="text" id="chkDampingRatio" onchange="chkDampingRatioEvent(this)" value="0.25"></td>
+        </tr>
+        <tr>
+          <td><label for="chkPhaseVelocity">Phase velocity</label></td>
+          <td><input type="text" id="chkPhaseVelocity" onchange="chkPhaseVelocityEvent(this)" value="0.2"></td>
+        </tr>
         <tr>
           <td><label for="sldTicksPerSecond">Ticks per second (1-60)</label></td>
           <td><input type="range" id="sldTicksPerSecond" oninput="sldTicksPerSecondEvent(this)" class="slider" min="1" max="60" step="1" value="60"></td>
