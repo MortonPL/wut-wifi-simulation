@@ -72,7 +72,7 @@ class Room {
                 let nextValue = 2 * this.getValue(x, y) - this.getLastValue(x, y);
                 nextValue += 1 / this.getMaterialValue(x, y) * c2 * (this.getValue(x + 1, y) - 2 * this.getValue(x, y) + this.getValue(x - 1, y));
                 nextValue += 1 / this.getMaterialValue(x, y) * c2 * (this.getValue(x, y + 1) - 2 * this.getValue(x, y) + this.getValue(x, y - 1));
-                nextValue -= dampingRatio * dt * (this.getValue(x, y) - this.getLastValue(x, y));
+                nextValue -= damping * dt * (this.getValue(x, y) - this.getLastValue(x, y));
                 this.setNextValue(x, y, nextValue);
             }
 

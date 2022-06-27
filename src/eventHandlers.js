@@ -20,7 +20,7 @@ function btnResetEvent() {
     routers[0].frequencyIdx = 0;
     routers[1].frequency = Router.LOW_FREQUENCY;
     routers[1].frequencyIdx = 0;
-    dampingRatio = 0.25;
+    damping = 0.25;
     phaseVelocity = 0.2;
     tps = 60;
     stepsPerTick = 1;
@@ -37,7 +37,7 @@ function btnResetEvent() {
     document.getElementById("chkSecondRouter").checked = false;
     document.getElementById("chkRouter2Low").checked = true;
     document.getElementById("chkRouter2CustomValue").value = 0;
-    document.getElementById("chkDampingRatio").value = 0.25;
+    document.getElementById("chkDamping").value = 0.25;
     document.getElementById("chkPhaseVelocity").value = 0.20;
     document.getElementById("sldTicksPerSecond").value = 60;
     document.getElementById("sldStepsPerTick").value = 1;
@@ -112,9 +112,9 @@ function chkRouter2CustomValueEvent(txt) {
             routers[1].frequency = float(txt.value);
 }
 
-function chkDampingRatioEvent(txt) {
+function chkDampingEvent(txt) {
     if (!isNaN(float(txt.value)))
-        dampingRatio = float(txt.value);
+        damping = float(txt.value);
 }
 
 function chkPhaseVelocityEvent(txt) {

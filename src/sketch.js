@@ -2,15 +2,15 @@
 
 // ******************** GLOBAL CONSTANTS & PSEUDOCONSTANTS ******************** //
 // GENERAL
-const ROOM_WIDTH = 257;                             // (int) width of the room in meters
-const ROOM_HEIGHT = 257;                            // (int) height of the room in meters
+const ROOM_WIDTH = 129;                             // (int) width of the room in meters
+const ROOM_HEIGHT = 129;                            // (int) height of the room in meters
 const MAX_VALUE = 255;                              // (int) maximum acceptable wave value
 const MAX_AMPLITUDE = Math.floor(MAX_VALUE / 2);    // (int) absolute maximum wave amplitude
 let tps = 60;                                       // (int) ticks (updates) per second
 let stepsPerTick = 1;                               // (int) steps (calculations) per tick (update)
 
 // VISUALS
-const CANVAS_SCALE = 2;                 // (int) multiplier to pixel count per point
+const CANVAS_SCALE = 4;                 // (int) multiplier to pixel count per point
 let positiveWaveColor = [255, 0, 0];    // (RGB) color of the positive values
 let negativeWaveColor = [0, 0, 255];    // (RGB) color of the negative values
 
@@ -18,7 +18,7 @@ let negativeWaveColor = [0, 0, 255];    // (RGB) color of the negative values
 const dt_1 = 1e-2;                                              // (float) time step in seconds
 let dt = dt_1 / stepsPerTick;                                   // (float) time step adjusted for steps per tick (default 1 step)
 let phaseVelocity = 0.2;                                        // (float) phase velocity
-let dampingRatio = 0.25;                                        // (float) damping ratio
+let damping = 0.25;                                             // (float) damping
 const dx = 1 / ROOM_WIDTH;                                      // (float) width step
 const dy = 1 / ROOM_HEIGHT;                                     // (float) height step
 let c2 = phaseVelocity * phaseVelocity * dt * dt / dx / dy;   // (float) helper coefficient: v^2 multiplied by steps
