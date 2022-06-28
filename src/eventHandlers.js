@@ -21,6 +21,7 @@ function btnResetEvent() {
     routers[1].powerPct = 1;
     damping = 0.25;
     phaseVelocity = 0.2;
+    globalRefractionModifier = 2.5;
     tps = 60;
     stepsPerTick = 1;
     positiveWaveColor = [255, 0, 0];
@@ -35,12 +36,13 @@ function btnResetEvent() {
     document.getElementById("outRouter1Power").value = (1).toFixed(2);
     document.getElementById("sldRouter2Power").value = 1;
     document.getElementById("outRouter2Power").value = (1).toFixed(2);
-    document.getElementById("chkRouter1CustomValue").value = 0;
+    document.getElementById("txtRouter1CustomValue").value = 0;
     document.getElementById("chkSecondRouter").checked = false;
     document.getElementById("chkRouter2High").checked = true;
-    document.getElementById("chkRouter2CustomValue").value = 0;
-    document.getElementById("chkDamping").value = 0.25;
-    document.getElementById("chkPhaseVelocity").value = 0.20;
+    document.getElementById("txtRouter2CustomValue").value = 0;
+    document.getElementById("txtDamping").value = 0.25;
+    document.getElementById("txtPhaseVelocity").value = 0.20;
+    document.getElementById("txtRefractionModifier").value = 2.5;
     document.getElementById("sldTicksPerSecond").value = 60;
     document.getElementById("outTicksPerSecond").value = 60;
     document.getElementById("sldStepsPerTick").value = 1;
@@ -63,10 +65,10 @@ function chkRouter1HighEvent(chk) {
 }
 
 function chkRouter1CustomEvent(chk) {
-    routers[0].frequency = document.getElementById("chkRouter1CustomValue").value;
+    routers[0].frequency = document.getElementById("txtRouter1CustomValue").value;
 }
 
-function chkRouter1CustomValueEvent(txt) {
+function txtRouter1CustomValueEvent(txt) {
     if (document.getElementById("chkRouter1Custom").checked)
         if (!isNaN(float(txt.value)))
             routers[0].frequency = float(txt.value) * 10;
@@ -94,10 +96,10 @@ function chkRouter2HighEvent(chk) {
 }
 
 function chkRouter2CustomEvent(chk) {
-    routers[1].frequency = document.getElementById("chkRouter2CustomValue").value;
+    routers[1].frequency = document.getElementById("txtRouter2CustomValue").value;
 }
 
-function chkRouter2CustomValueEvent(txt) {
+function txtRouter2CustomValueEvent(txt) {
     if (document.getElementById("chkRouter2Custom").checked)
         if (!isNaN(float(txt.value)))
             routers[1].frequency = float(txt.value) * 10;
@@ -108,16 +110,21 @@ function sldRouter2PowerEvent(sld) {
     document.getElementById("outRouter2Power").value = float(sld.value).toFixed(2);
 }
 
-function chkDampingEvent(txt) {
+function txtDampingEvent(txt) {
     if (!isNaN(float(txt.value)))
         damping = float(txt.value);
 }
 
-function chkPhaseVelocityEvent(txt) {
+function txtPhaseVelocityEvent(txt) {
     if (!isNaN(float(txt.value))) {
         phaseVelocity = float(txt.value);
         c2 = phaseVelocity * phaseVelocity * dt * dt / dx / dy;
     }
+}
+
+function txtRefractionModifierEvent(txt) {
+    if (!isNaN(float(txt.value)))
+        globalRefractionModifier = float(txt.value);
 }
 
 function sldTicksPerSecondEvent(sld) {

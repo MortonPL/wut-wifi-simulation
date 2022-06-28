@@ -21,7 +21,8 @@ let phaseVelocity = 0.2;                                        // (float) phase
 let damping = 0.25;                                             // (float) damping
 const dx = 1 / ROOM_WIDTH;                                      // (float) width step
 const dy = 1 / ROOM_HEIGHT;                                     // (float) height step
-let c2 = phaseVelocity * phaseVelocity * dt * dt / dx / dy;   // (float) helper coefficient: v^2 multiplied by steps
+let c2 = phaseVelocity * phaseVelocity * dt * dt / dx / dy;     // (float) helper coefficient: v^2 multiplied by steps
+let globalRefractionModifier = 2.5;                             // (float) multiplier to material refraction index
 
 // CONTROLS
 const ROUTER_MOVE_RANGE = 20;  // (in px) maximum distance for which the router "snaps" to mouse to move around

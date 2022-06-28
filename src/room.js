@@ -44,7 +44,7 @@ class Room {
         // Copy values
         for (let x = 0; x < img.width; ++x) {
             for (let y = 0; y < img.height; ++y) {
-                this.setMaterialValue(x, y, 1 + 2.5 * (1 - img.get(x, y)[0] / MAX_VALUE));
+                this.setMaterialValue(x, y, 1 - img.get(x, y)[0] / MAX_VALUE);
             }
         }
 
@@ -65,7 +65,7 @@ class Room {
                 // Consider value at point
                 let nextValue = 2 * this.getValue(x, y) - this.getPrevValue(x, y);
                 // Consider refraction and c^2 coefficient
-                let temp = 1 / this.getMaterialValue(x, y) * c2;
+                let temp = 1 / (1 + globalRefractionModifier * this.getMaterialValue(x, y)) * c2;
                 // Consider 4 neighbours
                 nextValue += temp * (this.getValue(x + 1, y) - 2 * this.getValue(x, y) + this.getValue(x - 1, y));
                 nextValue += temp * (this.getValue(x, y + 1) - 2 * this.getValue(x, y) + this.getValue(x, y - 1));

@@ -1,5 +1,12 @@
-# fizyka-wifi
+# Symulacja fal WiFi w mieszkaniu
 
-https://p5js.org
+### Autorzy:
+ * Bartłomiej Moroz
+ * Dawid Sygocki
 
-https://mathjs.org/index.html
+### 
+
+### Użyte biblioteki:
+* https://p5js.org (grafika)
+
+* https://mathjs.org/index.html (macierze)

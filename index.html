@@ -21,7 +21,7 @@
     <!-- Controls here --> 
     <p>
       <!-- Main controls -->
-      <input type="button" id="btnPaused" onclick="btnPausedEvent(this)" value="Start">
+      <input type="button" id="btnPaused" onclick="btnPausedEvent(this)" value="Start" style="margin-left: 100px;">
       <input type="button" id="btnClean" onclick="btnCleanEvent()" value="Reset space">
       <input type="button" id="btnReset" onclick="btnResetEvent()" value="Reset all values">
       <!-- Specific values controls -->
@@ -51,7 +51,7 @@
               <tr>
                 <td><input type="radio" id="chkRouter1Custom" onchange="chkRouter1CustomEvent(this)" name="chkRouter1Frequency">
                 <label for="chkRouter1Custom">Custom (in GHz)</label>
-                <input type="text" id="chkRouter1CustomValue" onchange="chkRouter1CustomValueEvent(this)" value="0"></td>
+                <input type="text" id="txtRouter1CustomValue" onchange="txtRouter1CustomValueEvent(this)" value="0"></td>
               </tr>
             </table>
           </td>
@@ -81,19 +81,23 @@
               <tr>
                 <td><input type="radio" id="chkRouter2Custom" onchange="chkRouter2CustomEvent(this)" name="chkRouter2Frequency">
                 <label for="chkRouter2Custom">Custom (in GHz)</label>
-                <input type="text" id="chkRouter2CustomValue" onchange="chkRouter2CustomValueEvent(this)" value="0"></td>
+                <input type="text" id="txtRouter2CustomValue" onchange="txtRouter2CustomValueEvent(this)" value="0"></td>
               </tr>
             </table>
           </td>
         </tr>
         <!-- Other controls -->
         <tr>
-          <td><label for="chkDamping">Damping (alpha)</label></td>
-          <td><input type="text" id="chkDamping" onchange="chkDampingEvent(this)" value="0.25"></td>
+          <td><label for="txtDamping">Damping (alpha)</label></td>
+          <td><input type="text" id="txtDamping" onchange="txtDampingEvent(this)" value="0.25"></td>
         </tr>
         <tr>
-          <td><label for="chkPhaseVelocity">Phase velocity</label></td>
-          <td><input type="text" id="chkPhaseVelocity" onchange="chkPhaseVelocityEvent(this)" value="0.2"></td>
+          <td><label for="txtPhaseVelocity">Phase velocity</label></td>
+          <td><input type="text" id="txtPhaseVelocity" onchange="txtPhaseVelocityEvent(this)" value="0.2"></td>
+        </tr>
+        <tr>
+          <td><label for="txtRefractionModifier">Refraction modifier</label></td>
+          <td><input type="text" id="txtRefractionModifier" onchange="txtRefractionModifierEvent(this)" value="2.5"></td>
         </tr>
         <tr>
           <td><label for="sldTicksPerSecond">Ticks per second (1-60)</label></td>
@@ -104,6 +108,7 @@
           <td><label for="sldStepsPerTick">Steps per tick (1-10)</label></td>
           <td><input type="range" id="sldStepsPerTick" oninput="sldStepsPerTickEvent(this)" class="slider" min="1" max="10" step="1" value="1">
             <output id="outStepsPerTick">1</output></td>
+          <td style="color:red;">Requires space reset. Warning: performance heavy!</td>
         </tr>
         <tr>
           <td><label for="clrPositiveWave">Positive wave color</label></td>
