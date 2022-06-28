@@ -63,7 +63,7 @@ class Router {
     get amplitude() { return this.#powerPct * MAX_AMPLITUDE; }
 
     /**
-     * Update self.
+     * Update room state based on self.
      */
     update(room) {
         room.setValue(this.x, this.y, this.amplitude * sin(this.frequency * Router.#frequencyUnitMultiplier * t))

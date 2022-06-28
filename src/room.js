@@ -6,23 +6,23 @@
  * - material refraction coefficient.
  */
 class Room {
+    #prevValues;
+    #values;
+    #nextValues;
+    #refractionCoeffs;
+
+    /**
+     * @param {number} width Vertical room size (non-negative integer).
+     * @param {number} height Horizontal room size (non-negative integer).
+     */
     constructor(width, height) {
         this.width = width;
         this.height = height;
-        this.values = math.matrix(math.zeros(this.width, this.height));
-        this.prevValues = math.matrix(math.zeros(this.width, this.height));
-        this.nextValues = math.matrix(math.zeros(this.width, this.height));
-        this.materials = math.matrix(math.ones(this.width, this.height));
+        this.clean();
+        this.#refractionCoeffs = math.matrix(math.ones(this.width, this.height));
     }
 
-    getValue(x, y)            { return this.values.valueOf()[x][y];     }
-    setValue(x, y, v)         { this.values.valueOf()[x][y] = v;        }
-    getPrevValue(x, y)        { return this.prevValues.valueOf()[x][y]; }
-    setPrevValue(x, y, v)     { this.prevValues.valueOf()[x][y] = v;    }
-    getNextValue(x, y)        { return this.nextValues.valueOf()[x][y]; }
-    setNextValue(x, y, v)     { this.nextValues.valueOf()[x][y] = v;    }
-    getMaterialValue(x, y)    { return this.materials.valueOf()[x][y];  }
-    setMaterialValue(x, y, v) { this.materials.valueOf()[x][y] = v;     }
+    setValue(x, y, v) { this.#values.valueOf()[x][y] = v; }
 
     /**
      * Load a refraction coefficient matrix from grayscale image.
@@ -55,10 +55,11 @@ class Room {
         // Place transformed values in the refraction coefficient matrix
         // (the darker a pixel, the denser material represented by a corresponding coefficient)
         img.loadPixels();
+        let refractionCoeffs = this.#refractionCoeffs.valueOf();
         for (let x = 0; x < img.width; ++x) {
             for (let y = 0; y < img.height; ++y) {
                 let pixelIndex = (y * img.width + x) * 4;
-                this.setMaterialValue(x, y, 1 - img.pixels[pixelIndex] / MAX_VALUE);
+                refractionCoeffs[x][y] = 1 - img.pixels[pixelIndex] / MAX_VALUE;
             }
         }
 
@@ -69,42 +70,54 @@ class Room {
      * Reset simulation values.
      */
     clean() {
-        this.values = math.matrix(math.zeros(this.width, this.height));
-        this.prevValues = math.matrix(math.zeros(this.width, this.height));
-        this.nextValues = math.matrix(math.zeros(this.width, this.height));
+        this.#prevValues = math.matrix(math.zeros(this.width, this.height));
+        this.#values = math.matrix(math.zeros(this.width, this.height));
+        this.#nextValues = math.matrix(math.zeros(this.width, this.height));
     }
 
     /**
      * Update self, progressing by a time step.
      */
     update() {
+        // Cache direct references to contents of matrices
+        let prevValues = this.#prevValues.valueOf();
+        let values = this.#values.valueOf();
+        let nextValues = this.#nextValues.valueOf();
+        let refractionCoeffs = this.#refractionCoeffs.valueOf();
+
         for (let x = 1; x < this.width - 1; ++x)
             for (let y = 1; y < this.height - 1; ++y) {
                 // Consider value at point
-                let nextValue = 2 * this.getValue(x, y) - this.getPrevValue(x, y);
+                nextValues[x][y] = 2 * values[x][y] - prevValues[x][y];
                 // Consider refraction and c^2 coefficient
-                let coeffs = 1 / (1 + globalRefractionModifier * this.getMaterialValue(x, y)) * c2;
+                let coeffs = 1 / (1 + globalRefractionModifier * refractionCoeffs[x][y]) * c2;
                 // Consider 4 neighbours
-                nextValue += coeffs * (this.getValue(x + 1, y) - 2 * this.getValue(x, y) + this.getValue(x - 1, y));
-                nextValue += coeffs * (this.getValue(x, y + 1) - 2 * this.getValue(x, y) + this.getValue(x, y - 1));
+                nextValues[x][y] += coeffs * (values[x + 1][y] - 2 * values[x][y] + values[x - 1][y]);
+                nextValues[x][y] += coeffs * (values[x][y + 1] - 2 * values[x][y] + values[x][y - 1]);
                 // Consider damping
-                nextValue -= damping * dt * (this.getValue(x, y) - this.getPrevValue(x, y));
-                this.setNextValue(x, y, nextValue);
+                nextValues[x][y] -= damping * dt * (values[x][y] - prevValues[x][y]);
             }
 
         // Edges - border values are copies of neighbours closer to the center
         for (let x = 0; x < this.width; ++x) {
-            this.setNextValue(x, 0, this.getNextValue(x, 1));
-            this.setNextValue(x, this.height - 1, this.getNextValue(x, this.height - 2));
+            nextValues[x][0] = nextValues[x][1];
+            nextValues[x][this.height - 1] = nextValues[x][this.height - 2];
         }
         for (let y = 0; y < this.height; ++y) {
-            this.setNextValue(0, y, this.getNextValue(1, y));
-            this.setNextValue(this.width - 1, y, this.getNextValue(this.width - 2, y));
+            nextValues[0][y] = nextValues[1][y];
+            nextValues[this.width - 1][y] = nextValues[this.width - 2][y];
         }
 
-        // Shift values - now becomes previous, next becomes now
-        this.prevValues = this.values.clone();
-        this.values = this.nextValues.clone();
+        this.#shiftMatrices();
+    }
+
+    /**
+     * Shift values: now becomes previous, next becomes now.
+     */
+    #shiftMatrices() {
+        this.#prevValues = this.#values;
+        this.#values = this.#nextValues;
+        this.#nextValues = math.matrix(math.zeros(this.width, this.height));
     }
 
     /**
@@ -114,7 +127,7 @@ class Room {
      */
     draw(img) {
         img.loadPixels();
-        this.values.forEach((v, [x, y], _) => {
+        this.#values.forEach((v, [x, y], _) => {
             let pixelIndex = (y * img.width + x) * 4;
 
             // color
@@ -127,7 +140,7 @@ class Room {
             v = abs(v);  // get the absolute value
             const magicMultiplier = 4;  // scale values for better visibility (too large values are clamped by p5, so there's no problem)
             if (showSignOnly)
-                v = v >= 0.1 ? (MAX_AMPLITUDE / magicMultiplier) : 0; // make color half-transparent for all non-zero values
+                v = v >= 0.1 ? (MAX_AMPLITUDE / magicMultiplier) : 0;  // make color half-transparent for all non-zero values
             img.pixels[pixelIndex + 3] = v * magicMultiplier;
         });
         img.updatePixels();
