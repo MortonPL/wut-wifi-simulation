@@ -32,8 +32,8 @@ let waveImg;        // image object for wave values
 
 const room = new Room(ROOM_WIDTH, ROOM_HEIGHT); // room objects
 const routers = [                               // router objects
-    new Router(Math.floor(ROOM_WIDTH / 2), Math.floor(ROOM_HEIGHT / 2)),
-    new Router(Math.floor(ROOM_WIDTH / 4), Math.floor(ROOM_HEIGHT / 4), false)
+    new Router(Math.floor(ROOM_WIDTH / 2), Math.floor(ROOM_HEIGHT / 2), true),
+    new Router(Math.floor(ROOM_WIDTH / 4), Math.floor(ROOM_HEIGHT / 4), false, Router.HIGH_FREQUENCY)
 ];
 
 let t = 0;                              // (float) current simulated time

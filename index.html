@@ -34,6 +34,11 @@
             <input type="checkbox" id="chkFirstRouter" onchange="chkRouter1EnabledEvent(this)" checked="true">
           </td>
           <td>
+            <label for="sldRouter1Power">Power</label>
+            <input type="range" id="sldRouter1Power" oninput="sldRouter1PowerEvent(this)" class="slider" min="0" max="1" step="0.01" value="1.00">
+            <output id="outRouter1Power">1.00</output>
+          </td>
+          <td>
             <table>
               <tr>
                 <td><input type="radio" id="chkRouter1Low" onchange="chkRouter1LowEvent(this)" name="chkRouter1Frequency" checked="true">
@@ -59,13 +64,18 @@
             <input type="checkbox" id="chkSecondRouter" onchange="chkRouter2EnabledEvent(this)">
           </td>
           <td>
+            <label for="sldRouter2Power">Power</label>
+            <input type="range" id="sldRouter2Power" oninput="sldRouter2PowerEvent(this)" class="slider" min="0" max="1" step="0.01" value="1.00">
+            <output id="outRouter2Power">1.00</output>
+          </td>
+          <td>
             <table>
               <tr>
-                <td><input type="radio" id="chkRouter2Low" onchange="chkRouter2LowEvent(this)" name="chkRouter2Frequency" checked="true">
+                <td><input type="radio" id="chkRouter2Low" onchange="chkRouter2LowEvent(this)" name="chkRouter2Frequency">
                 <label for="chkRouter2Low">2.4 GHz</label></td>
               </tr>
               <tr>
-                <td><input type="radio" id="chkRouter2High" onchange="chkRouter2HighEvent(this)" name="chkRouter2Frequency">
+                <td><input type="radio" id="chkRouter2High" onchange="chkRouter2HighEvent(this)" name="chkRouter2Frequency" checked="true">
                 <label for="chkRouter2High">5 GHz</label></td>
               </tr>
               <tr>
@@ -87,11 +97,13 @@
         </tr>
         <tr>
           <td><label for="sldTicksPerSecond">Ticks per second (1-60)</label></td>
-          <td><input type="range" id="sldTicksPerSecond" oninput="sldTicksPerSecondEvent(this)" class="slider" min="1" max="60" step="1" value="60"></td>
+          <td><input type="range" id="sldTicksPerSecond" oninput="sldTicksPerSecondEvent(this)" class="slider" min="1" max="60" step="1" value="60">
+          <output id="outTicksPerSecond">60</output></td>
         </tr>
         <tr>
           <td><label for="sldStepsPerTick">Steps per tick (1-10)</label></td>
-          <td><input type="range" id="sldStepsPerTick" oninput="sldStepsPerTickEvent(this)" class="slider" min="1" max="10" step="1" value="1"></td>
+          <td><input type="range" id="sldStepsPerTick" oninput="sldStepsPerTickEvent(this)" class="slider" min="1" max="10" step="1" value="1">
+            <output id="outStepsPerTick">1</output></td>
         </tr>
         <tr>
           <td><label for="clrPositiveWave">Positive wave color</label></td>

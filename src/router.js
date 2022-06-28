@@ -10,13 +10,14 @@ class Router {
     frequency = 24;
     static routerImg;
 
-    constructor(x, y, enabled = true, powerPct = 1.0) {
+    constructor(x, y, enabled = true, frequency = Router.LOW_FREQUENCY, powerPct = 1.0) {
         if (powerPct === null)
             powerPct = 1.0;
         this.#position = [x, y];
         this.#validatePowerPct(powerPct);
         this.#powerPct = powerPct;
         this.enabled = enabled;
+        this.frequency = frequency;
     }
 
     #validatePowerPct(value) {
@@ -32,9 +33,10 @@ class Router {
     get y() { return this.#position[1]; }
     set y(value) { this.#position[1] = value; }
 
+    // % of emitting power
     get powerPct() { return this.#powerPct; }
     set powerPct(value) {
-        this.#validatePowerPct(powerPct);
+        this.#validatePowerPct(value);
         this.#powerPct = value;
     }
 

@@ -17,6 +17,8 @@ function btnResetEvent() {
     // change all values to default
     routers[0].frequency = Router.LOW_FREQUENCY;
     routers[1].frequency = Router.LOW_FREQUENCY;
+    routers[0].powerPct = 1;
+    routers[1].powerPct = 1;
     damping = 0.25;
     phaseVelocity = 0.2;
     tps = 60;
@@ -29,14 +31,20 @@ function btnResetEvent() {
     // change all controls to default
     document.getElementById("chkFirstRouter").checked = true;
     document.getElementById("chkRouter1Low").checked = true;
+    document.getElementById("sldRouter1Power").value = 1;
+    document.getElementById("outRouter1Power").value = (1).toFixed(2);
+    document.getElementById("sldRouter2Power").value = 1;
+    document.getElementById("outRouter2Power").value = (1).toFixed(2);
     document.getElementById("chkRouter1CustomValue").value = 0;
     document.getElementById("chkSecondRouter").checked = false;
-    document.getElementById("chkRouter2Low").checked = true;
+    document.getElementById("chkRouter2High").checked = true;
     document.getElementById("chkRouter2CustomValue").value = 0;
     document.getElementById("chkDamping").value = 0.25;
     document.getElementById("chkPhaseVelocity").value = 0.20;
     document.getElementById("sldTicksPerSecond").value = 60;
+    document.getElementById("outTicksPerSecond").value = 60;
     document.getElementById("sldStepsPerTick").value = 1;
+    document.getElementById("outStepsPerTick").value = 1;
     document.getElementById("clrPositiveWave").value = "#ff0000";
     document.getElementById("clrNegativeWave").value = "#0000ff";
     document.getElementById("chkSignOnly").checked = false;
@@ -62,6 +70,11 @@ function chkRouter1CustomValueEvent(txt) {
     if (document.getElementById("chkRouter1Custom").checked)
         if (!isNaN(float(txt.value)))
             routers[0].frequency = float(txt.value) * 10;
+}
+
+function sldRouter1PowerEvent(sld) {
+    routers[0].powerPct = float(sld.value);
+    document.getElementById("outRouter1Power").value = float(sld.value).toFixed(2);
 }
 
 function chkSignOnlyEvent(chk) {
@@ -90,6 +103,11 @@ function chkRouter2CustomValueEvent(txt) {
             routers[1].frequency = float(txt.value) * 10;
 }
 
+function sldRouter2PowerEvent(sld) {
+    routers[1].powerPct = float(sld.value);
+    document.getElementById("outRouter2Power").value = float(sld.value).toFixed(2);
+}
+
 function chkDampingEvent(txt) {
     if (!isNaN(float(txt.value)))
         damping = float(txt.value);
@@ -104,10 +122,12 @@ function chkPhaseVelocityEvent(txt) {
 
 function sldTicksPerSecondEvent(sld) {
     tps = sld.value;
+    document.getElementById("outTicksPerSecond").value = sld.value;
 }
 
 function sldStepsPerTickEvent(sld) {
     stepsPerTick = sld.value;
+    document.getElementById("outStepsPerTick").value = sld.value;
     dt = dt_1 / stepsPerTick;
     c2 = phaseVelocity * phaseVelocity * dt * dt / dx / dy;
 }
