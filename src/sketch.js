@@ -15,21 +15,21 @@ let positiveWaveColor = [255, 0, 0];    // (RGB) color of the positive values
 let negativeWaveColor = [0, 0, 255];    // (RGB) color of the negative values
 
 // PHYSICS
-const dt_1 = 1e-2;                                              // (float) time step in seconds
-let dt = dt_1 / stepsPerTick;                                   // (float) time step adjusted for steps per tick (default 1 step)
-let phaseVelocity = 0.2;                                        // (float) phase velocity
-let damping = 0.25;                                             // (float) damping
-const dx = 1 / ROOM_WIDTH;                                      // (float) width step
-const dy = 1 / ROOM_HEIGHT;                                     // (float) height step
-let c2 = phaseVelocity * phaseVelocity * dt * dt / dx / dy;     // (float) helper coefficient: v^2 multiplied by steps
-let globalRefractionModifier = 2.5;                             // (float) multiplier to material refraction index
+const dt_1 = 1e-2;                                             // (float) time step in seconds
+let dt = dt_1 / stepsPerTick;                                  // (float) time step adjusted for steps per tick (default 1 step)
+let phaseVelocity = 0.2;                                       // (float) phase velocity
+let damping = 0.25;                                            // (float) damping
+const dx = 1 / ROOM_WIDTH;                                     // (float) width step
+const dy = 1 / ROOM_HEIGHT;                                    // (float) height step
+let c2 = phaseVelocity * phaseVelocity * dt * dt / dx / dy;    // (float) helper coefficient: v^2 multiplied by steps
+let globalRefractionModifier = 2.5;                            // (float) multiplier to material refraction index
 
 // CONTROLS
 const ROUTER_MOVE_RANGE = 20;  // (in px) maximum distance for which the router "snaps" to mouse to move around
 
 // ******************** GLOBAL VARIABLES ******************** //
 let materialImg;    // image object for the room layout / material layer
-let waveImg;        // image object for wave values
+let wavesImg;       // image object for wave values
 
 const room = new Room(ROOM_WIDTH, ROOM_HEIGHT); // room objects
 const routers = [                               // router objects
@@ -37,31 +37,33 @@ const routers = [                               // router objects
     new Router(Math.floor(ROOM_WIDTH / 4), Math.floor(ROOM_HEIGHT / 4), false, Router.HIGH_FREQUENCY)
 ];
 
-let t = 0;                              // (float) current simulated time
-let time = 0;                           // (int) timestamp of REAL time
-let paused = true;                      // (bool) is the simulation paused?
-let showSignOnly = false;               // (bool) should we visualize only the sign of wave (as opposed to intensity)?
+let t = 0;                   // (float) current simulated time
+let time = 0;                // (int) timestamp of REAL time
+let paused = true;           // (bool) is the simulation paused?
+let showSignOnly = false;    // (bool) should we visualize only the sign of wave (as opposed to intensity)?
 
 // ******************** FUNCTIONS ******************** //
 // from: https://stackoverflow.com/a/65552876
 function hexToRgb(h){return['0x'+h[1]+h[2]|0,'0x'+h[3]+h[4]|0,'0x'+h[5]+h[6]|0]}
 
-// Preload function that loads and caches assets (images)
+/**
+ * Load assets.
+ *
+ * [This event handler is provided by p5.]
+ */
 function preload() {
-    let a = new AssetCache();
-
-    a.cacheImage('material.png');
-    a.cacheImage('wifi.png');
-
-    materialImg = a.getImage('material.png');
-    Router.routerImg = a.getImage('wifi.png');
+    materialImg = loadImage('/images/material.png')
+    Router.routerImg = loadImage('/images/wifi.png');
 }
 
-// Setup function that initializes all necessary data and widgets
+/**
+ * Initializes all necessary data and widgets.
+ *
+ * [This event handler is provided by p5.]
+ */
 function setup() {
     // Setup the canvas
-    var canvas = createCanvas(ROOM_WIDTH * CANVAS_SCALE, ROOM_HEIGHT * CANVAS_SCALE);
-    canvas.parent('sketchImage');
+    createCanvas(ROOM_WIDTH * CANVAS_SCALE, ROOM_HEIGHT * CANVAS_SCALE).parent('sketchImage');
     noSmooth();
     canvas.imageSmoothingEnabled = false;
 
@@ -70,8 +72,11 @@ function setup() {
     materialImg = room.loadMaterial(materialImg);
 }
 
-// Event handler
-// Move the router on mouse drag if it's close enough
+/**
+ * Move the router on mouse drag if it's close enough.
+ *
+ * [This event handler is provided by p5.]
+ */
 function mouseDragged() {
     // Find mouse position
     const mousePos = {
@@ -102,7 +107,9 @@ function mouseDragged() {
     }
 }
 
-// Update function that contains all calculations
+/**
+ * Perform all necessary calculations.
+ */
 function update() {
     // Check if enough time passed to process another tick (in miliseconds)
     if (Date.now() - time >= 1000 / tps) {
@@ -118,7 +125,11 @@ function update() {
     }
 }
 
-// Draw function that redraws the screen
+/**
+ * Redraw the screen.
+ *
+ * [This event handler is provided by p5.]
+ */
 function draw() {
     if (!paused)
         update();
@@ -129,6 +140,10 @@ function draw() {
     routers.forEach(router => router.draw());
 }
 
+/**
+ * Check if mouse is inside the canvas.
+ * @returns {bool} If mouse is inside the canvas.
+ */
 function isMouseInsideCanvas() {
     return 0 <= mouseX && mouseX < ROOM_WIDTH * CANVAS_SCALE && 0 <= mouseY && mouseY < ROOM_WIDTH * CANVAS_SCALE;
 }

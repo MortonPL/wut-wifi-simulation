@@ -71,7 +71,7 @@ function chkRouter1CustomEvent(chk) {
 function txtRouter1CustomValueEvent(txt) {
     if (document.getElementById("chkRouter1Custom").checked)
         if (!isNaN(float(txt.value)))
-            routers[0].frequency = float(txt.value) * 10;
+            routers[0].frequency = float(txt.value);
 }
 
 function sldRouter1PowerEvent(sld) {
@@ -102,7 +102,7 @@ function chkRouter2CustomEvent(chk) {
 function txtRouter2CustomValueEvent(txt) {
     if (document.getElementById("chkRouter2Custom").checked)
         if (!isNaN(float(txt.value)))
-            routers[1].frequency = float(txt.value) * 10;
+            routers[1].frequency = float(txt.value);
 }
 
 function sldRouter2PowerEvent(sld) {

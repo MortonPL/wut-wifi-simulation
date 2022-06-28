@@ -1,15 +1,28 @@
-/* Router represents a point source of waves.
- * Router can have changing position and can be enabled/disabled.
+/**
+ * Router represents a point source of waves.
+ *
+ * Router can be enabled/disabled and moved in 2D space.
+ * Its power and frequency can be changed.
  */
 class Router {
-    static LOW_FREQUENCY = 24;
-    static HIGH_FREQUENCY = 50;
-    #position;
-    #powerPct;  // range: [0, 1]
-    enabled;
-    frequency = 24;
+    static LOW_FREQUENCY = 2.4;
+    static HIGH_FREQUENCY = 5;
     static routerImg;
 
+    static #frequencyUnitMultiplier = 10;
+
+    enabled;
+    frequency = 2.4;
+
+    #position;
+    #powerPct;
+
+    /**
+     * @param {number} x Initial vertical position (non-negative integer).
+     * @param {number} y Initial horizontal position (non-negative integer).
+     * @param {number} frequency Initial frequency (in GHz, positive number).
+     * @param {number} powerPct Initial power level (in range [0; 1]).
+     */
     constructor(x, y, enabled = true, frequency = Router.LOW_FREQUENCY, powerPct = 1.0) {
         if (powerPct === null)
             powerPct = 1.0;
@@ -33,24 +46,38 @@ class Router {
     get y() { return this.#position[1]; }
     set y(value) { this.#position[1] = value; }
 
-    // % of emitting power
+    /**
+     * Power percentage (in range [0; 1]).
+     * @type {number}
+     */
     get powerPct() { return this.#powerPct; }
     set powerPct(value) {
         this.#validatePowerPct(value);
         this.#powerPct = value;
     }
 
+    /**
+     * Max amplitude (unaffected by time).
+     * @type {number}
+     */
     get amplitude() { return this.#powerPct * MAX_AMPLITUDE; }
 
-    // Update self
+    /**
+     * Update self.
+     */
     update(room) {
-        room.setValue(this.x, this.y, this.amplitude * sin(this.frequency * t))
+        room.setValue(this.x, this.y, this.amplitude * sin(this.frequency * Router.#frequencyUnitMultiplier * t))
     }
 
-    // Draw self
+    /**
+     * Draw self.
+     */
     draw() {
         if (this.enabled)
-            // Offset so that the bottom middle of the image is at the router's center
-            image(Router.routerImg, this.#position[0]*CANVAS_SCALE - 15, this.#position[1]*CANVAS_SCALE - 20, 32, 24);
+            // Center the image in the position of router
+            image(Router.routerImg,
+                round(this.x * CANVAS_SCALE - Router.routerImg.width / 2) + 1,
+                round(this.y * CANVAS_SCALE - Router.routerImg.height / 2) + 1,
+                Router.routerImg.width, Router.routerImg.height);
     }
 }
