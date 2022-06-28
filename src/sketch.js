@@ -15,8 +15,8 @@ let wavesImg;       // image object for wave values
  * [This event handler is provided by p5.]
  */
 function preload() {
-    materialImg = loadImage('/images/material.png')
-    Router.routerImg = loadImage('/images/wifi.png');
+    materialImg = loadImage('./images/material.png')
+    Router.routerImg = loadImage('./images/wifi.png');
 }
 
 /**
