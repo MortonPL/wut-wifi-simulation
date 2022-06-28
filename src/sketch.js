@@ -39,7 +39,6 @@ const routers = [                               // router objects
 let t = 0;                              // (float) current simulated time
 let time = 0;                           // (int) timestamp of REAL time
 let paused = true;                      // (bool) is the simulation paused?
-let wasMousePressed = false;            // (bool) was the mouse pressed in the previous frame?
 let showSignOnly = false;               // (bool) should we visualize only the sign of wave (as opposed to intensity)?
 
 // ******************** FUNCTIONS ******************** //
@@ -110,7 +109,7 @@ function update() {
         for (let i = 0; i < stepsPerTick; i++) {
             // For each enabled router, emit wave
             routers.filter(router => router.enabled)
-                .forEach(router => room.setValue(router.x, router.y, router.amplitude * sin(router.frequency * t)));
+                .forEach(router => router.update(room));
             // Propagate the waves in the room
             room.update();
             t += dt;

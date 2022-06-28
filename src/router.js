@@ -42,6 +42,11 @@ class Router {
 
     get amplitude() { return this.#powerPct * MAX_AMPLITUDE; }
 
+    // Update self
+    update(room) {
+        room.setValue(this.x, this.y, this.amplitude * sin(this.frequency * t))
+    }
+
     // Draw self
     draw() {
         if (this.enabled)
