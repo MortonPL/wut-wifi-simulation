@@ -6,6 +6,10 @@
  * - material refraction coefficient.
  */
 class Room {
+    static positiveWaveColor = [255, 0, 0];  // (RGB) color for positive amplitudes
+    static negativeWaveColor = [0, 0, 255];  // (RGB) color for negative amplitudes
+    static showSignOnly = false;             // (bool) should we visualize only the sign of wave (as opposed to intensity)?
+
     #prevValues;
     #values;
     #nextValues;
@@ -90,12 +94,12 @@ class Room {
                 // Consider value at point
                 nextValues[x][y] = 2 * values[x][y] - prevValues[x][y];
                 // Consider refraction and c^2 coefficient
-                let coeffs = 1 / (1 + globalRefractionModifier * refractionCoeffs[x][y]) * c2;
+                let coeffs = 1 / (1 + Physics.globalRefractionModifier * refractionCoeffs[x][y]) * Physics.c2;
                 // Consider 4 neighbours
                 nextValues[x][y] += coeffs * (values[x + 1][y] - 2 * values[x][y] + values[x - 1][y]);
                 nextValues[x][y] += coeffs * (values[x][y + 1] - 2 * values[x][y] + values[x][y - 1]);
                 // Consider damping
-                nextValues[x][y] -= damping * dt * (values[x][y] - prevValues[x][y]);
+                nextValues[x][y] -= Physics.damping * Physics.dt * (values[x][y] - prevValues[x][y]);
             }
 
         // Edges - border values are copies of neighbours closer to the center
@@ -131,7 +135,7 @@ class Room {
             let pixelIndex = (y * img.width + x) * 4;
 
             // color
-            let resultColor = v >= 0 ? positiveWaveColor : negativeWaveColor;
+            let resultColor = v >= 0 ? Room.positiveWaveColor : Room.negativeWaveColor;
             img.pixels[pixelIndex] = resultColor[0];
             img.pixels[pixelIndex + 1] = resultColor[1];
             img.pixels[pixelIndex + 2] = resultColor[2];
@@ -139,7 +143,7 @@ class Room {
             // alpha
             v = abs(v);  // get the absolute value
             const magicMultiplier = 4;  // scale values for better visibility (too large values are clamped by p5, so there's no problem)
-            if (showSignOnly)
+            if (Room.showSignOnly)
                 v = v >= 0.1 ? (MAX_AMPLITUDE / magicMultiplier) : 0;  // make color half-transparent for all non-zero values
             img.pixels[pixelIndex + 3] = v * magicMultiplier;
         });

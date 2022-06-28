@@ -19,16 +19,14 @@ function btnResetEvent() {
     routers[1].frequency = Router.LOW_FREQUENCY;
     routers[0].powerPct = 1;
     routers[1].powerPct = 1;
-    damping = 0.25;
-    phaseVelocity = 0.2;
-    globalRefractionModifier = 2.5;
-    tps = 60;
-    stepsPerTick = 1;
-    positiveWaveColor = [255, 0, 0];
-    negativeWaveColor = [0, 0, 255];
-    showSignOnly = false;
-    dt = dt_1 / stepsPerTick;
-    c2 = phaseVelocity * phaseVelocity * dt * dt / dx / dy;
+    Physics.damping = 0.25;
+    Physics.phaseVelocity = 0.2;
+    Physics.globalRefractionModifier = 2.5;
+    Physics.tps = 60;
+    Physics.stepsPerTick = 1;
+    Room.positiveWaveColor = [255, 0, 0];
+    Room.negativeWaveColor = [0, 0, 255];
+    Room.showSignOnly = false;
     // change all controls to default
     document.getElementById("chkFirstRouter").checked = true;
     document.getElementById("chkRouter1Low").checked = true;
@@ -80,7 +78,7 @@ function sldRouter1PowerEvent(sld) {
 }
 
 function chkSignOnlyEvent(chk) {
-    showSignOnly = chk.checked;
+    Room.showSignOnly = chk.checked;
 }
 
 function chkRouter2EnabledEvent(chk) {
@@ -112,37 +110,34 @@ function sldRouter2PowerEvent(sld) {
 
 function txtDampingEvent(txt) {
     if (!isNaN(float(txt.value)))
-        damping = float(txt.value);
+        Physics.damping = float(txt.value);
 }
 
 function txtPhaseVelocityEvent(txt) {
     if (!isNaN(float(txt.value))) {
-        phaseVelocity = float(txt.value);
-        c2 = phaseVelocity * phaseVelocity * dt * dt / dx / dy;
+        Physics.phaseVelocity = float(txt.value);
     }
 }
 
 function txtRefractionModifierEvent(txt) {
     if (!isNaN(float(txt.value)))
-        globalRefractionModifier = float(txt.value);
+        Physics.globalRefractionModifier = float(txt.value);
 }
 
 function sldTicksPerSecondEvent(sld) {
-    tps = sld.value;
+    Physics.tps = sld.value;
     document.getElementById("outTicksPerSecond").value = sld.value;
 }
 
 function sldStepsPerTickEvent(sld) {
-    stepsPerTick = sld.value;
+    Physics.stepsPerTick = sld.value;
     document.getElementById("outStepsPerTick").value = sld.value;
-    dt = dt_1 / stepsPerTick;
-    c2 = phaseVelocity * phaseVelocity * dt * dt / dx / dy;
 }
 
 function clrPositiveWave(clr) {
-    positiveWaveColor = hexToRgb(clr.value);
+    Room.positiveWaveColor = hexToRgb(clr.value);
 }
 
 function clrNegativeWave(clr) {
-    negativeWaveColor = hexToRgb(clr.value);
+    Room.negativeWaveColor = hexToRgb(clr.value);
 }
