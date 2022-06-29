@@ -1,39 +1,40 @@
 const routerSettings = [
     {
-        enabledCheck: document.getElementById("chkFirstRouter"),
-        powerSlider: document.getElementById("sldRouter1Power"),
-        powerOut: document.getElementById("outRouter1Power"),
-        lowFreqRadio: document.getElementById("chkRouter1Low"),
-        highFreqRadio: document.getElementById("chkRouter1High"),
-        customFreqRadio: document.getElementById("chkRouter1Custom"),
-        customFreqSlider: document.getElementById("sldRouter1CustomValue"),
-        customFreqOut: document.getElementById("outRouter1CustomValue")
+        enabledCheck: document.getElementById('chkFirstRouter'),
+        powerSlider: document.getElementById('sldRouter1Power'),
+        powerOut: document.getElementById('outRouter1Power'),
+        lowFreqRadio: document.getElementById('chkRouter1Low'),
+        highFreqRadio: document.getElementById('chkRouter1High'),
+        customFreqRadio: document.getElementById('chkRouter1Custom'),
+        customFreqSlider: document.getElementById('sldRouter1CustomValue'),
+        customFreqOut: document.getElementById('outRouter1CustomValue')
     },
     {
-        enabledCheck: document.getElementById("chkSecondRouter"),
-        powerSlider: document.getElementById("sldRouter2Power"),
-        powerOut: document.getElementById("outRouter2Power"),
-        lowFreqRadio: document.getElementById("chkRouter2Low"),
-        highFreqRadio: document.getElementById("chkRouter2High"),
-        customFreqRadio: document.getElementById("chkRouter2Custom"),
-        customFreqSlider: document.getElementById("sldRouter2CustomValue"),
-        customFreqOut: document.getElementById("outRouter2CustomValue")
+        enabledCheck: document.getElementById('chkSecondRouter'),
+        powerSlider: document.getElementById('sldRouter2Power'),
+        powerOut: document.getElementById('outRouter2Power'),
+        lowFreqRadio: document.getElementById('chkRouter2Low'),
+        highFreqRadio: document.getElementById('chkRouter2High'),
+        customFreqRadio: document.getElementById('chkRouter2Custom'),
+        customFreqSlider: document.getElementById('sldRouter2CustomValue'),
+        customFreqOut: document.getElementById('outRouter2CustomValue')
     }
 ];
-const dampingInput = document.getElementById("numDamping");
-const phaseVelocityInput = document.getElementById("numPhaseVelocity");
-const refractionModifierInput = document.getElementById("numRefractionModifier");
-const tpsSlider = document.getElementById("sldTicksPerSecond");
-const tpsOut = document.getElementById("outTicksPerSecond");
-const stepsPerTickSlider = document.getElementById("sldStepsPerTick");
-const stepsPerTickOut = document.getElementById("outStepsPerTick");
-const positiveWaveColor = document.getElementById("clrPositiveWave");
-const negativeWaveColor = document.getElementById("clrNegativeWave");
-const signOnlyCheck = document.getElementById("chkSignOnly");
+const dampingInput = document.getElementById('numDamping');
+const phaseVelocityInput = document.getElementById('numPhaseVelocity');
+const refractionModifierInput = document.getElementById('numRefractionModifier');
+const tpsSlider = document.getElementById('sldTicksPerSecond');
+const tpsOut = document.getElementById('outTicksPerSecond');
+const stepsPerTickSlider = document.getElementById('sldStepsPerTick');
+const stepsPerTickOut = document.getElementById('outStepsPerTick');
+const positiveWaveColor = document.getElementById('clrPositiveWave');
+const negativeWaveColor = document.getElementById('clrNegativeWave');
+const signOnlyCheck = document.getElementById('chkSignOnly');
+const fileInputDiv = document.getElementById('fileInput');
 
 function btnPausedEvent(btn) {
     paused = !paused;
-    btn.value = paused ? "Resume" : "Pause";
+    btn.value = paused ? 'Resume' : 'Pause';
 }
 
 function btnCleanEvent() {
@@ -140,4 +141,8 @@ function clrPositiveWave(clr) {
 
 function clrNegativeWave(clr) {
     Room.negativeWaveColor = hexToRgb(clr.value);
+}
+
+function btnLoadFileEvent() {
+    fileInputDiv.getElementsByTagName('input')[0].click();
 }

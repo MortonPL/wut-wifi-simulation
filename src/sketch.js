@@ -33,6 +33,8 @@ function setup() {
     // Setup the image layers
     wavesImg = createImage(ROOM_WIDTH, ROOM_WIDTH);
     materialImg = room.loadMaterial(materialImg);
+
+    createFileInput(handleFileInput).parent('fileInput');
 }
 
 /**
@@ -109,4 +111,17 @@ function draw() {
  */
 function isMouseInsideCanvas() {
     return 0 <= mouseX && mouseX < ROOM_WIDTH * CANVAS_SCALE && 0 <= mouseY && mouseY < ROOM_WIDTH * CANVAS_SCALE;
+}
+
+/**
+ * Set loaded file as the new material image.
+ * @param {p5.File} file Loaded file.
+ */
+function handleFileInput(file) {
+    if (file.file.type !== 'image/png') {
+        alert('Error: Expected a PNG image.')
+        return;
+    }
+    loadImage(file.data, img => materialImg = room.loadMaterial(img),
+        () => alert('Error: Could not load the image.'));
 }

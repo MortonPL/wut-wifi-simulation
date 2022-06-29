@@ -64,8 +64,11 @@ class Room {
             for (let y = 0; y < img.height; ++y) {
                 let pixelIndex = (y * img.width + x) * 4;
                 refractionCoeffs[x][y] = 1 - img.pixels[pixelIndex] / MAX_VALUE;
+                // Make the result image grayscale even if it originally was RGB
+                img.pixels[pixelIndex + 1] = img.pixels[pixelIndex + 2] = img.pixels[pixelIndex];
             }
         }
+        img.updatePixels();
 
         return img;
     }
