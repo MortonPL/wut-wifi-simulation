@@ -133,6 +133,7 @@ function sldTicksPerSecondEvent(sld) {
 function sldStepsPerTickEvent(sld) {
     Physics.stepsPerTick = int(sld.value);
     stepsPerTickOut.value = int(sld.value).toString();
+    room.clean();
 }
 
 function clrPositiveWave(clr) {
