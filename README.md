@@ -18,6 +18,6 @@
 Projekt dostępny jest on-line pod adresem: https://home.elka.pw.edu.pl/~dsygocki/
 
 Istnieje również możliwość uruchomienia lokalnego z wykorzystaniem dowolnego serwera HTTP.  
-Dostarczony skrypt `serve.bat` pozwala na wykonanie tej akcji dla systemu Windows z zainstalowanym środowiskiem Python.
+Dostarczony skrypt `serve.bat` pozwala na wykonanie tej akcji dla systemu Windows z zainstalowanym środowiskiem Python. Dla systemów *NIX istnieje odpowiedni skrypt `serve.sh`.
 
 Uruchomienie bez serwera nie jest obsługiwane ze względu na ochronę CORS naruszaną w takim przypadku przy wczytywaniu grafik.
