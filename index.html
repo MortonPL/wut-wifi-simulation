@@ -9,7 +9,6 @@
     <script src="src/physics.js"></script>
     <script src="src/room.js"></script>
     <script src="src/router.js"></script>
-    <script src="src/eventHandlers.js"></script>
     <link rel="stylesheet" type="text/css" href="style.css" />
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
     <meta charset="utf-8">
@@ -32,29 +31,24 @@
           <td>Router I</td>
           <td>
             <label for="chkFirstRouter">Enabled</label>
-            <input type="checkbox" id="chkFirstRouter" onchange="chkRouter1EnabledEvent(this)" checked="true">
+            <input type="checkbox" id="chkFirstRouter" onchange="chkRouterEnabledEvent(this, 0)" checked="true">
           </td>
           <td>
             <label for="sldRouter1Power">Power</label>
-            <input type="range" id="sldRouter1Power" oninput="sldRouter1PowerEvent(this)" class="slider" min="0" max="1" step="0.01" value="1.00">
+            <input type="range" id="sldRouter1Power" oninput="sldRouterPowerEvent(this, 0)" class="slider" min="0" max="1" step="0.01" value="1.00">
             <output id="outRouter1Power">1.00</output>
           </td>
           <td>
-            <table>
-              <tr>
-                <td><input type="radio" id="chkRouter1Low" onchange="chkRouter1LowEvent(this)" name="chkRouter1Frequency" checked="true">
-                <label for="chkRouter1Low">2.4 GHz</label></td>
-              </tr>
-              <tr>
-                <td><input type="radio" id="chkRouter1High" onchange="chkRouter1HighEvent(this)" name="chkRouter1Frequency">
-                <label for="chkRouter1High">5 GHz</label></td>
-              </tr>
-              <tr>
-                <td><input type="radio" id="chkRouter1Custom" onchange="chkRouter1CustomEvent(this)" name="chkRouter1Frequency">
-                <label for="chkRouter1Custom">Custom (in GHz)</label>
-                <input type="text" id="txtRouter1CustomValue" onchange="txtRouter1CustomValueEvent(this)" value="0"></td>
-              </tr>
-            </table>
+            <input type="radio" id="chkRouter1Low" onchange="chkRouterLowEvent(0)" name="chkRouter1Frequency" checked="true">
+            <label for="chkRouter1Low">2.4 GHz</label>
+            <br>
+            <input type="radio" id="chkRouter1High" onchange="chkRouterHighEvent(0)" name="chkRouter1Frequency">
+            <label for="chkRouter1High">5 GHz</label>
+            <br>
+            <input type="radio" id="chkRouter1Custom" onchange="chkRouterCustomEvent(0)" name="chkRouter1Frequency">
+            <label for="chkRouter1Custom">Custom (in GHz)</label>
+            <input type="range" id="sldRouter1CustomValue" oninput="sldRouterCustomValueEvent(this, 0)" class="slider" min="0" max="10" step="0.01" value="1.00">
+            <output id="outRouter1CustomValue">1.00</output>
           </td>
         </tr>
         <!-- Router II control -->
@@ -62,43 +56,38 @@
           <td>Router II</td>
           <td>
             <label for="chkSecondRouter">Enabled</label>
-            <input type="checkbox" id="chkSecondRouter" onchange="chkRouter2EnabledEvent(this)">
+            <input type="checkbox" id="chkSecondRouter" onchange="chkRouterEnabledEvent(this, 1)">
           </td>
           <td>
             <label for="sldRouter2Power">Power</label>
-            <input type="range" id="sldRouter2Power" oninput="sldRouter2PowerEvent(this)" class="slider" min="0" max="1" step="0.01" value="1.00">
+            <input type="range" id="sldRouter2Power" oninput="sldRouterPowerEvent(this, 1)" class="slider" min="0" max="1" step="0.01" value="1.00">
             <output id="outRouter2Power">1.00</output>
           </td>
           <td>
-            <table>
-              <tr>
-                <td><input type="radio" id="chkRouter2Low" onchange="chkRouter2LowEvent(this)" name="chkRouter2Frequency">
-                <label for="chkRouter2Low">2.4 GHz</label></td>
-              </tr>
-              <tr>
-                <td><input type="radio" id="chkRouter2High" onchange="chkRouter2HighEvent(this)" name="chkRouter2Frequency" checked="true">
-                <label for="chkRouter2High">5 GHz</label></td>
-              </tr>
-              <tr>
-                <td><input type="radio" id="chkRouter2Custom" onchange="chkRouter2CustomEvent(this)" name="chkRouter2Frequency">
-                <label for="chkRouter2Custom">Custom (in GHz)</label>
-                <input type="text" id="txtRouter2CustomValue" onchange="txtRouter2CustomValueEvent(this)" value="0"></td>
-              </tr>
-            </table>
+            <input type="radio" id="chkRouter2Low" onchange="chkRouterLowEvent(1)" name="chkRouter2Frequency">
+            <label for="chkRouter2Low">2.4 GHz</label>
+            <br>
+            <input type="radio" id="chkRouter2High" onchange="chkRouterHighEvent(1)" name="chkRouter2Frequency" checked="true">
+            <label for="chkRouter2High">5 GHz</label>
+            <br>
+            <input type="radio" id="chkRouter2Custom" onchange="chkRouterCustomEvent(1)" name="chkRouter2Frequency">
+            <label for="chkRouter2Custom">Custom (in GHz)</label>
+            <input type="range" id="sldRouter2CustomValue" oninput="sldRouterCustomValueEvent(this, 1)" class="slider" min="0" max="10" step="0.01" value="1.00">
+            <output id="outRouter2CustomValue">1.00</output>
           </td>
         </tr>
         <!-- Other controls -->
         <tr>
-          <td><label for="txtDamping">Damping (alpha)</label></td>
-          <td><input type="text" id="txtDamping" onchange="txtDampingEvent(this)" value="0.25"></td>
+          <td><label for="numDamping">Damping (alpha)</label></td>
+          <td><input type="number" id="numDamping" onchange="numDampingEvent(this)" min="0" step="0.01" value="0.25"></td>
         </tr>
         <tr>
-          <td><label for="txtPhaseVelocity">Phase velocity</label></td>
-          <td><input type="text" id="txtPhaseVelocity" onchange="txtPhaseVelocityEvent(this)" value="0.2"></td>
+          <td><label for="numPhaseVelocity">Phase velocity</label></td>
+          <td><input type="number" id="numPhaseVelocity" onchange="numPhaseVelocityEvent(this)" min="0" max="0.275" step="0.01" value="0.2"></td>
         </tr>
         <tr>
-          <td><label for="txtRefractionModifier">Refraction modifier</label></td>
-          <td><input type="text" id="txtRefractionModifier" onchange="txtRefractionModifierEvent(this)" value="2.5"></td>
+          <td><label for="numRefractionModifier">Refraction modifier</label></td>
+          <td><input type="number" id="numRefractionModifier" onchange="numRefractionModifierEvent(this)" min="1" step="0.01" value="2.5"></td>
         </tr>
         <tr>
           <td><label for="sldTicksPerSecond">Ticks per second (1-60)</label></td>
@@ -125,5 +114,6 @@
         </tr>
       </table>
     </p>
+    <script src="src/eventHandlers.js"></script>
   </body>
 </html>
